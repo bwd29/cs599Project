@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#define DTYPE double
+#define DTYPE float
 
 DTYPE radToDeg(DTYPE rad){
     return rad*(180.0/M_PI);
@@ -82,22 +82,22 @@ class Vec{
         Vec rot(Vec axis, DTYPE theta){
             Vec outVec;
             DTYPE thetaRad = degToRad(theta);
-            // Vec crossProd = axis.cross(*this);
-            // DTYPE dotProd = axis.dot(*this);
-            // DTYPE sinTheta = sin(thetaRad);
-            // DTYPE cosTheta = cos(thetaRad);
-            // outVec.x = x*cosTheta+crossProd.x*sinTheta + axis.x*dotProd*(1- cosTheta);
-            // outVec.y = y*cosTheta+crossProd.y*sinTheta + axis.y*dotProd*(1- cosTheta);
-            // outVec.z = z*cosTheta+crossProd.z*sinTheta + axis.z*dotProd*(1- cosTheta);
+            Vec crossProd = axis.cross(*this);
+            DTYPE dotProd = axis.dot(*this);
+            DTYPE sinTheta = sin(thetaRad);
+            DTYPE cosTheta = cos(thetaRad);
+            outVec.x = x*cosTheta+crossProd.x*sinTheta + axis.x*dotProd*(1- cosTheta);
+            outVec.y = y*cosTheta+crossProd.y*sinTheta + axis.y*dotProd*(1- cosTheta);
+            outVec.z = z*cosTheta+crossProd.z*sinTheta + axis.z*dotProd*(1- cosTheta);
             
-            DTYPE a =cos(thetaRad/2);
-            DTYPE b = axis.x*sin(thetaRad/2);
-            DTYPE c = axis.y*sin(thetaRad/2);
-            DTYPE d = axis.z*sin(thetaRad/2);
+            // DTYPE a =cos(thetaRad/2);
+            // DTYPE b = axis.x*sin(thetaRad/2);
+            // DTYPE c = axis.y*sin(thetaRad/2);
+            // DTYPE d = axis.z*sin(thetaRad/2);
 
-            outVec.x = (a*a+b*b-c*c-d*d)*x + 2*(b*c-a*d)*y + 2*(b*d+a*c)*z;
-            outVec.y = 2*(b*c+a*d)*x + (a*a+c*c-b*b-d*d)*y + 2*(c*d-a*b)*z;
-            outVec.z = 2*(b*d-a*c)*x + 2*(c*d+a*b)*y + (a*a+d*d-b*b-c*c)*z; 
+            // outVec.x = (a*a+b*b-c*c-d*d)*x + 2*(b*c-a*d)*y + 2*(b*d+a*c)*z;
+            // outVec.y = 2*(b*c+a*d)*x + (a*a+c*c-b*b-d*d)*y + 2*(c*d-a*b)*z;
+            // outVec.z = 2*(b*d-a*c)*x + 2*(c*d+a*b)*y + (a*a+d*d-b*b-c*c)*z; 
 
             return outVec;
         }

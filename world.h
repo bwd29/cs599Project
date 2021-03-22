@@ -75,4 +75,5 @@ class World{
             return cost + 10000000*endPoint.dist(dest);
         }
 
+
 };
