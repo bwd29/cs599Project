@@ -2,14 +2,16 @@
 
 #include <math.h>
 
-#define DTYPE float
+#define DTYPE double
+
+#define PI 3.14159265359
 
 DTYPE radToDeg(DTYPE rad){
-    return rad*(180.0/M_PI);
+    return rad*(180.0/PI);
 }
 
 DTYPE degToRad(DTYPE deg){
-    return deg*(M_PI/180.0);
+    return deg*(PI/180.0);
 }
 
 class Vec{
