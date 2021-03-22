@@ -1,7 +1,7 @@
 #include "actuator.h"
 #include "world.h"
+#include "vec.h"
 #include <stdio.h>
-
 
 
 // run a brute force with actuators
@@ -11,8 +11,8 @@ int main(int argc, char * argv[]){
 
     int numActuators = 2;
     Vec destination = Vec(0,0,1);
-    DTYPE actuatorStepSize = 0.5;
-    DTYPE minAngle = 0;
+    DTYPE actuatorStepSize = 0.1;
+    DTYPE minAngle = -180;
     DTYPE maxAngle = 180;
     Vec endPoint = Vec(2, 0, 0);
 
@@ -68,8 +68,11 @@ int main(int argc, char * argv[]){
     Vec actuatorLocs[numActuators];
 
     World bestWorld;
-    for(DTYPE i = 0; i < motions; i+=actuatorStepSize){
-        for(DTYPE j = 0; j < motions; j+=actuatorStepSize){
+
+    double time1 = omp_get_wtime();
+
+    for(DTYPE i = minAngle; i <= maxAngle; i+=actuatorStepSize){
+        for(DTYPE j = minAngle; j <= maxAngle; j+=actuatorStepSize){
             World tempWorld = World(test);
             tempWorld.moveActuators(0,i);
             tempWorld.moveActuators(1,j);
@@ -77,7 +80,7 @@ int main(int argc, char * argv[]){
             // if(i == 30 && j == 120){
             //     printf("\nscore: %f", score);
             //     printf("\nsecond axis orient: (%f,%f,%f)", tempWorld.actuatorOrienations[1].x, tempWorld.actuatorOrienations[1].y, tempWorld.actuatorOrienations[1].z );
-            // } 
+            // }
             if(score < lowestScore){
                 lowestScore = score;
                 bestWorld = World(tempWorld);
@@ -91,6 +94,10 @@ int main(int argc, char * argv[]){
             }
         }
     }
+
+    double time2 = omp_get_wtime();
+
+    printf("Complete!\nTime to brute search: %f \n", time2 - time1);
 
     printf("\nLowest score was %f with angles: ", lowestScore);
     for(int i = 0; i < numActuators; i++){
