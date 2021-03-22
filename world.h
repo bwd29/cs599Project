@@ -51,17 +51,30 @@ class World{
             //moveing all actators after actIndex (not includeing the actuator at actIndex)
             
             Vec axisOfRotation = actuatorOrienations[actIndex].norm();
-            // actuatorOrienations[actIndex]= actuatorOrienations[actIndex].rot(axisOfRotation, alpha);
+            actuatorOrienations[actIndex]= actuatorOrienations[actIndex].rot(axisOfRotation, alpha);
 
             //itterate through all of the actators and update actuator locations in world
             for(int i = actIndex + 1; i < actuators.size(); i++){
                 //move actuator at i
-                actuatorLocations[i] = actuatorLocations[i].rot(axisOfRotation, alpha);
+
+                //first we place actuator location relative to moving actuator
+                Vec tempLocation = actuatorLocations[i].diff(actuatorLocations[actIndex]);
+
+                //rotate our reduced location
+                tempLocation = tempLocation.rot(axisOfRotation, alpha);
+
+                // add the vecotr back in to get new location
+                actuatorLocations[i] = tempLocation.add(actuatorLocations[actIndex]);
+
                 actuatorOrienations[i] = actuatorOrienations[i].rot(axisOfRotation, alpha);
             }
 
             //move the end point
-            endPoint = endPoint.rot(axisOfRotation,alpha);
+            // orient the endpoint
+            Vec tmpEnd = endPoint.diff(actuatorLocations[actIndex]);
+            tmpEnd = tmpEnd.rot(axisOfRotation,alpha);
+
+            endPoint = tmpEnd.add(actuatorLocations[actIndex]);
 
             cost += alpha*actuators[actIndex].speed;
         }

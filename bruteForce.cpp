@@ -10,7 +10,7 @@ int main(int argc, char * argv[]){
 
 
     int numActuators = 2;
-    Vec destination = Vec(0,0,3);
+    Vec destination = Vec(0,0,1);
     DTYPE actuatorStepSize = 0.5;
     DTYPE minAngle = 0;
     DTYPE maxAngle = 180;
@@ -27,11 +27,40 @@ int main(int argc, char * argv[]){
     }
     printf("Complete\n");
 
+
+
+
+
+
+    printf("Performing test move:\n");
+    World tempTest = World(test);
+    tempTest.moveActuators(0,45);
+    printf("Actuator Loations: ");
+    for(int i = 0; i < numActuators; i++){
+        printf("\n(%f, %f, %f)", tempTest.actuatorLocations[i].x, tempTest.actuatorLocations[i].y, tempTest.actuatorLocations[i].z);
+    }
+    printf("\nActuator angles: ");
+      for(int i = 0; i < numActuators; i++){
+        printf("%f, ", tempTest.actuators[i].currentAngle);
+    }
+    printf("\nEndPoint: (%f,%f,%f)", tempTest.endPoint.x, tempTest.endPoint.y, tempTest.endPoint.z);
+    tempTest.moveActuators(1,45);
+    printf("Actuator Loations: ");
+    for(int i = 0; i < numActuators; i++){
+        printf("\n(%f, %f, %f)", tempTest.actuatorLocations[i].x, tempTest.actuatorLocations[i].y, tempTest.actuatorLocations[i].z);
+    }
+    printf("\nActuator angles: ");
+      for(int i = 0; i < numActuators; i++){
+        printf("%f, ", tempTest.actuators[i].currentAngle);
+    }
+    printf("\nEndPoint: (%f,%f,%f)", tempTest.endPoint.x, tempTest.endPoint.y, tempTest.endPoint.z);
+
+
     //now to try all combinations of movements
     //total possible states
     long numStates = pow((maxAngle-minAngle)/actuatorStepSize, numActuators);
 
-    printf("Itterating through %ld states...", numStates);
+    printf("\n\nItterating through %ld states...", numStates);
 
     DTYPE lowestScore = 1000;
     DTYPE bestAngles[numActuators];

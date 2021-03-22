@@ -62,6 +62,24 @@ class Vec{
             return sqrt(a+b+c); 
         }
 
+        //this vec mins another vec
+        Vec diff(Vec otherVec){
+            Vec outVec;
+            outVec.x = x - otherVec.x;
+            outVec.y = y - otherVec.y;
+            outVec.z = z - otherVec.z;;
+            return outVec;
+        }
+
+        //adds vectors
+        Vec add(Vec otherVec){
+            Vec outVec;
+            outVec.x = x + otherVec.x;
+            outVec.y = y + otherVec.y;
+            outVec.z = z + otherVec.z;;
+            return outVec;
+        }
+
         // normalize the current vector to length 1
         void normalize(){
             DTYPE mag = this->mag();
