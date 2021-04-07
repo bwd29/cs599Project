@@ -16,6 +16,8 @@ class World{
 
         Vec endPoint;
 
+        Vec destination;
+
         DTYPE cost = 0;
 
 
@@ -33,6 +35,7 @@ class World{
             actuatorLocations = copy->actuatorLocations;
             actuatorOrienations = copy->actuatorOrienations;
             endPoint = copy->endPoint;
+            destination = copy->destination;
         }
 
         //add an actuator
@@ -80,7 +83,7 @@ class World{
         }
 
         //check distance from the endpoint to a vec
-        DTYPE checkDist(Vec destination){
+        DTYPE checkDist(){
             return endPoint.dist(destination);
         }
 

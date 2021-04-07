@@ -1,5 +1,6 @@
 #include "actuator.h"
 #include "world.h"
+#include "node.h"
 #include <stdio.h>
 
 
@@ -22,7 +23,7 @@ int main(int argc, char * argv[]){
     for(int i = 0; i < numActuators; i++){
         Vec loc(i, 0, 0);
         Vec orient(0, -1, 0);
-        Actuator act = Actuator(minAngle,minAngle,maxAngle,i+1);
+        Actuator act = Actuator(minAngle,minAngle,maxAngle,i+1, actuatorStepSize);
         test.addActuator(act,loc,orient);
     }
     printf("Complete\n");
