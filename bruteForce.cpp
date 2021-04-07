@@ -1,6 +1,7 @@
 #include "actuator.h"
 #include "world.h"
 #include "node.h"
+#include "agent.h"
 #include <stdio.h>
 
 
@@ -74,7 +75,7 @@ int main(int argc, char * argv[]){
             World tempWorld = World(test);
             tempWorld.moveActuators(0,i);
             tempWorld.moveActuators(1,j);
-            DTYPE score = tempWorld.checkDist(destination);
+            DTYPE score = tempWorld.checkDist();
             // if(i == 30 && j == 120){
             //     printf("\nscore: %f", score);
             //     printf("\nsecond axis orient: (%f,%f,%f)", tempWorld.actuatorOrienations[1].x, tempWorld.actuatorOrienations[1].y, tempWorld.actuatorOrienations[1].z );

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "world.h"
 
 
@@ -36,6 +37,20 @@ class Node{
             worldState = World(&world);
             parent = &newParent;
             cost = newParent.cost;
+        }
+
+        // overload the operator <
+        bool operator<(const Node& r) const
+        {
+
+            return cost < r.cost;
+
+        }
+    
+        // overload the operator >
+        bool operator>(const Node& r) const
+        {
+            return cost > r.cost;
         }
 
         // methods
@@ -86,11 +101,24 @@ class Node{
         }
 
         void determineCost(){
-            //subtract the change in distance
-            cost -= parent->worldState.checkDist() 
+            //update based on distance
+            cost += worldState.checkDist() - parent->worldState.checkDist();
 
+            //can further update for speed of actuators etc...
         }
 
+        // method to reorder the children nodes by lowest cost to highest
+        void rankChildren(){
+
+            //update children costs
+            for(int i = 0; i < children.size(); i++){
+                children[i]->determineCost();
+            }
+            
+            //sort by lowest cost to highes cost
+            std::sort(children.begin(), children.end());
+
+        }
 
 
 
