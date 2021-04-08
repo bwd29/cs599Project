@@ -31,6 +31,7 @@ class Node{
 
         Node(World world){
             worldState = World(&world);
+            cost = worldState.checkDist();
         }
 
         Node(World world, Node newParent){
@@ -102,7 +103,7 @@ class Node{
 
         void determineCost(){
             //update based on distance
-            cost += worldState.checkDist() - parent->worldState.checkDist();
+            cost = worldState.checkDist();
 
             //can further update for speed of actuators etc...
         }
