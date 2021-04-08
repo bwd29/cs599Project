@@ -2,14 +2,16 @@
 
 #include <math.h>
 
-#define DTYPE float
+#define DTYPE double
+
+#define PI 3.14159265359
 
 DTYPE radToDeg(DTYPE rad){
-    return rad*(180.0/M_PI);
+    return rad*(180.0/PI);
 }
 
 DTYPE degToRad(DTYPE deg){
-    return deg*(M_PI/180.0);
+    return deg*(PI/180.0);
 }
 
 class Vec{
@@ -58,6 +60,24 @@ class Vec{
             DTYPE c = z*z;
 
             return sqrt(a+b+c); 
+        }
+
+        //this vec mins another vec
+        Vec diff(Vec otherVec){
+            Vec outVec;
+            outVec.x = x - otherVec.x;
+            outVec.y = y - otherVec.y;
+            outVec.z = z - otherVec.z;;
+            return outVec;
+        }
+
+        //adds vectors
+        Vec add(Vec otherVec){
+            Vec outVec;
+            outVec.x = x + otherVec.x;
+            outVec.y = y + otherVec.y;
+            outVec.z = z + otherVec.z;;
+            return outVec;
         }
 
         // normalize the current vector to length 1
