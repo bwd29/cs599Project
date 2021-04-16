@@ -14,6 +14,8 @@ class Node{
         //a vector of children nodes
         std::vector<Node*> children;
 
+        omp_lock_t pushLock;
+
         // a pointer to the parent node
         Node * parent;
 
@@ -27,17 +29,20 @@ class Node{
             children = nodeA->children;
             parent = nodeA->parent;
             cost= nodeA->cost;
+            omp_init_lock(&pushLock);
         }
 
         Node(World world){
             worldState = World(&world);
             cost = worldState.checkDist();
+            omp_init_lock(&pushLock);
         }
 
         Node(World world, Node newParent){
             worldState = World(&world);
             parent = &newParent;
             cost = newParent.cost;
+            omp_init_lock(&pushLock);
         }
 
         // overload the operator <
@@ -63,7 +68,10 @@ class Node{
             int numActuators = worldState.actuators.size();
 
             // add children based on possible moves
-            for(int i = 0; i < numActuators; i++){
+
+            int i;
+            #pragma omp parallel for shared(i)
+            for(i = 0; i < numActuators; i++){
                 //try to move actuator by stepsize up
                 if(worldState.actuators[i].checkRotate(worldState.actuators[i].stepSize)){
                     //make new world
@@ -76,8 +84,10 @@ class Node{
                     Node * newNode = new Node(newWorld, this);
 
                     //push back child on node vector
-                    children.push_back(newNode); 
 
+                    // omp_set_lock(&pushLock);
+                    children.push_back(newNode); 
+                    // omp_unset_lock(&pushLock);
 
                 }
 
@@ -94,7 +104,9 @@ class Node{
                     Node * newNode = new Node(newWorld, this);
 
                     //push back child on node vector
+                    // omp_set_lock(&pushLock);
                     children.push_back(newNode); 
+                    // omp_unset_lock(&pushLock);
                 }
 
             }

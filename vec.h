@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <omp.h>
 
 #define DTYPE double
 
