@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "omp.h"
 
+// g++ bruteforce.cpp -o test -lm -fopenmp (-g or -o3)
 
 
 // run a brute force with actuators
