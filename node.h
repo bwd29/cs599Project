@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include "world.h"
+#include <string>
 
 
 class Node{
@@ -63,14 +64,14 @@ class Node{
 
         //method to add children
 
-        void addChildren(){
+        void addChildren(std::vector<unsigned int> visited){
             //get the number of actuators
             int numActuators = worldState.actuators.size();
 
             // add children based on possible moves
 
             int i;
-            #pragma omp parallel for shared(i)
+            #pragma omp parallel for shared(i) num_threads(numActuators)
             for(i = 0; i < numActuators; i++){
                 //try to move actuator by stepsize up
                 if(worldState.actuators[i].checkRotate(worldState.actuators[i].stepSize)){
@@ -83,11 +84,14 @@ class Node{
                     //make new Node
                     Node * newNode = new Node(newWorld, this);
 
-                    //push back child on node vector
+                    bool beenThere = std::binary_search(visited.begin(), visited.end(), newNode->getHash());
 
-                    omp_set_lock(&pushLock);
-                    children.push_back(newNode); 
-                    omp_unset_lock(&pushLock);
+                    //push back child on node vector
+                    if(!beenThere){
+                        omp_set_lock(&pushLock);
+                        children.push_back(newNode); 
+                        omp_unset_lock(&pushLock);
+                    }
 
                 }
 
@@ -103,10 +107,14 @@ class Node{
                     //make new Node
                     Node * newNode = new Node(newWorld, this);
 
+                    bool beenThere = std::binary_search(visited.begin(), visited.end(), newNode->getHash());
+                    
                     //push back child on node vector
-                    omp_set_lock(&pushLock);
-                    children.push_back(newNode); 
-                    omp_unset_lock(&pushLock);
+                    if(!beenThere){
+                        omp_set_lock(&pushLock);
+                        children.push_back(newNode); 
+                        omp_unset_lock(&pushLock);
+                    }
                 }
 
             }
@@ -131,6 +139,15 @@ class Node{
             //sort by lowest cost to highes cost
             std::sort(children.begin(), children.end());
 
+        }
+
+        unsigned int getHash(){
+            std::string val = "";
+            for(int i = 0; i < worldState.actuators.size(); i++){
+                val += std::to_string(worldState.actuators[i].currentAngle);
+            }
+
+            return std::hash<std::string>{}(val);
         }
 
 

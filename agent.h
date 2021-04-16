@@ -2,6 +2,8 @@
 
 #include "node.h"
 #include <queue>
+#include <string>
+#include <unordered_map>
 
 
 class Agent{
@@ -10,6 +12,8 @@ class Agent{
 
         Node * bestNode;
         std::deque<Node*> openSet;
+        std::vector<unsigned int> visited;
+
 
 
 
@@ -28,10 +32,13 @@ class Agent{
                 count++;
                 Node * currentNode = openSet.front();
 
+                //hash the current node, and add to visited
+                visited.insert(std::lower_bound(visited.begin(),visited.end(),currentNode->getHash()),currentNode->getHash());
+                
 
                 openSet.pop_front();
 
-                currentNode->addChildren();
+                currentNode->addChildren(visited);
                 currentNode->rankChildren();
 
                 for(int i = currentNode->children.size() -1; i >= 0; i--){
@@ -62,4 +69,6 @@ class Agent{
 
 
         }
+
+
 };
