@@ -38,10 +38,10 @@ class Node{
             omp_init_lock(&pushLock);
         }
 
-        Node(World world, Node newParent){
+        Node(World world, Node * newParent){
             worldState = World(&world);
-            parent = &newParent;
-            cost = newParent.cost;
+            parent = newParent;
+            cost = newParent->cost;
             omp_init_lock(&pushLock);
         }
 
@@ -85,9 +85,9 @@ class Node{
 
                     //push back child on node vector
 
-                    // omp_set_lock(&pushLock);
+                    omp_set_lock(&pushLock);
                     children.push_back(newNode); 
-                    // omp_unset_lock(&pushLock);
+                    omp_unset_lock(&pushLock);
 
                 }
 
@@ -104,9 +104,9 @@ class Node{
                     Node * newNode = new Node(newWorld, this);
 
                     //push back child on node vector
-                    // omp_set_lock(&pushLock);
+                    omp_set_lock(&pushLock);
                     children.push_back(newNode); 
-                    // omp_unset_lock(&pushLock);
+                    omp_unset_lock(&pushLock);
                 }
 
             }

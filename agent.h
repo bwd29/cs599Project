@@ -16,7 +16,7 @@ class Agent{
         Agent(World startWorld){
             //make a starter node
             Node * start = new Node(startWorld);
-            // start->cost = start->worldState.checkDist();
+            // start->cost = start->worldState.checkDist();sss
             openSet.push_back(start);
             bestNode = start;
 
