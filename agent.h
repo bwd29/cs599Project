@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 
+#define MAXQ 10
 
 class Agent{
 
@@ -49,7 +50,11 @@ class Agent{
                 }
                 // openSet.push_back(currentNode->children[0]);
 
-                // std::sort(openSet.begin(), openSet.end());
+                std::sort(openSet.begin(), openSet.end());
+
+                while(openSet.size() > MAXQ){
+                    openSet.pop_back();
+                }
 
                 // currentNode->worldState.print();
                 // printf("\nCost: %f\n\n", currentNode->cost);
