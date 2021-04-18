@@ -71,7 +71,7 @@ class Node{
             // add children based on possible moves
 
             int i;
-            #pragma omp parallel for shared(i) num_threads(numActuators)
+            // #pragma omp parallel for shared(i) num_threads(numActuators)
             for(i = 0; i < numActuators; i++){
                 //try to move actuator by stepsize up
                 if(worldState.actuators[i].checkRotate(worldState.actuators[i].stepSize)){
