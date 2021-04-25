@@ -25,6 +25,10 @@ class Node{
         //constructors
         Node(){}
 
+        Node(char * pack, int numAct){
+            unpackNode(pack, numAct);
+        }
+
         Node(Node * nodeA){
             worldState = World(&(nodeA->worldState));
             children = nodeA->children;
@@ -35,7 +39,7 @@ class Node{
 
         Node(World world){
             worldState = World(&world);
-            cost = worldState.checkDist();
+            determineCost();
             omp_init_lock(&pushLock);
         }
 
@@ -151,5 +155,20 @@ class Node{
         }
 
 
+        unsigned int packNode(char * pack){
+
+            unsigned int worldPackSize = worldState.packWorld(pack);
+
+            unsigned int packSize = worldPackSize;
+
+            return packSize;
+        }
+
+        void unpackNode(char * pack, int numAct){
+
+            worldState = World(pack, numAct);
+            determineCost();
+
+        }
 
 };

@@ -27,6 +27,10 @@ class Vec{
             z = c;
         }
 
+        Vec(char * pack){
+            unpackVec(pack);
+        }
+
         //cross this vec by another and return
         Vec cross(Vec otherVec){
             Vec outVec;
@@ -121,6 +125,36 @@ class Vec{
             // outVec.z = 2*(b*d-a*c)*x + 2*(c*d+a*b)*y + (a*a+d*d-b*b-c*c)*z; 
 
             return outVec;
+        }
+
+        unsigned int packVec(char * pack){
+            unsigned int packSize = sizeof(DTYPE)*3;
+            pack = (char*)malloc(packSize);
+            char*ptr1 = (char*)(&x);
+            char*ptr2 = (char*)(&y);
+            char*ptr3 = (char*)(&z);
+            for(int i = 0; i < sizeof(DTYPE); i++){
+                pack[0*sizeof(DTYPE) + i] = ptr1[i];
+                pack[1*sizeof(DTYPE) + i] = ptr2[i];
+                pack[2*sizeof(DTYPE) + i] = ptr3[i];
+            }
+
+            return packSize;
+
+        } 
+
+        void unpackVec(char * pack){
+
+            char*ptr1 = (char*)(&x);
+            char*ptr2 = (char*)(&y);
+            char*ptr3 = (char*)(&z);
+            for(int i = 0; i < sizeof(DTYPE); i++){
+                ptr1[i] = pack[0*sizeof(DTYPE) + i];
+                ptr2[i] = pack[1*sizeof(DTYPE) + i];
+                ptr3[i] = pack[2*sizeof(DTYPE) + i];
+
+            }
+
         }
 
 };

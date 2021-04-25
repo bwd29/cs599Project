@@ -1,31 +1,26 @@
 #include "actuator.h"
 #include "world.h"
-<<<<<<< HEAD
-#include "vec.h"
-=======
 #include "node.h"
 #include "agent.h"
->>>>>>> 68fd4aaefd534968144ed50c30ffae6e89b9958b
 #include <stdio.h>
 #include "omp.h"
 
-// g++ bruteforce.cpp -o test -lm -fopenmp (-g or -o3)
+// mpic++ bruteForce.cpp -o test -lm -fopenmp (-g or -o3)
 
 // run a brute force with actuators
 int main(int argc, char * argv[]){
 
 
+    int my_rank, nprocs;
+    MPI_Init(&argc,&argv);
+    MPI_Comm_rank(MPI_COMM_WORLD,&my_rank);
+    MPI_Comm_size(MPI_COMM_WORLD,&nprocs);
+
 
     int numActuators = 2;
-<<<<<<< HEAD
-    Vec destination = Vec(0,0,1);
-    DTYPE actuatorStepSize = 0.1;
-    DTYPE minAngle = -180;
-=======
     Vec destination = Vec(0,1,1);
     DTYPE actuatorStepSize = 0.01;
     DTYPE minAngle = 0;
->>>>>>> 68fd4aaefd534968144ed50c30ffae6e89b9958b
     DTYPE maxAngle = 180;
     Vec endPoint = Vec(2, 0, 0);
 
@@ -40,7 +35,7 @@ int main(int argc, char * argv[]){
     }
 
     test.destination = destination;
-    
+
     printf("Complete\n");
 
 
@@ -48,79 +43,6 @@ int main(int argc, char * argv[]){
 
 
 
-<<<<<<< HEAD
-    printf("Performing test move:\n");
-    World tempTest = World(test);
-    tempTest.moveActuators(0,45);
-    printf("Actuator Loations: ");
-    for(int i = 0; i < numActuators; i++){
-        printf("\n(%f, %f, %f)", tempTest.actuatorLocations[i].x, tempTest.actuatorLocations[i].y, tempTest.actuatorLocations[i].z);
-    }
-    printf("\nActuator angles: ");
-      for(int i = 0; i < numActuators; i++){
-        printf("%f, ", tempTest.actuators[i].currentAngle);
-    }
-    printf("\nEndPoint: (%f,%f,%f)", tempTest.endPoint.x, tempTest.endPoint.y, tempTest.endPoint.z);
-    tempTest.moveActuators(1,45);
-    printf("Actuator Loations: ");
-    for(int i = 0; i < numActuators; i++){
-        printf("\n(%f, %f, %f)", tempTest.actuatorLocations[i].x, tempTest.actuatorLocations[i].y, tempTest.actuatorLocations[i].z);
-    }
-    printf("\nActuator angles: ");
-      for(int i = 0; i < numActuators; i++){
-        printf("%f, ", tempTest.actuators[i].currentAngle);
-    }
-    printf("\nEndPoint: (%f,%f,%f)", tempTest.endPoint.x, tempTest.endPoint.y, tempTest.endPoint.z);
-
-
-    //now to try all combinations of movements
-    //total possible states
-    long numStates = pow((maxAngle-minAngle)/actuatorStepSize, numActuators);
-
-    printf("\n\nItterating through %ld states...", numStates);
-
-    DTYPE lowestScore = 1000;
-    DTYPE bestAngles[numActuators];
-    DTYPE motions = (maxAngle-minAngle)/actuatorStepSize;
-    Vec actuatorLocs[numActuators];
-
-    World bestWorld;
-
-    double time1 = omp_get_wtime();
-
-    for(DTYPE i = minAngle; i <= maxAngle; i+=actuatorStepSize){
-        for(DTYPE j = minAngle; j <= maxAngle; j+=actuatorStepSize){
-            World tempWorld = World(test);
-            tempWorld.moveActuators(0,i);
-            tempWorld.moveActuators(1,j);
-            DTYPE score = tempWorld.checkDist(destination);
-            // if(i == 30 && j == 120){
-            //     printf("\nscore: %f", score);
-            //     printf("\nsecond axis orient: (%f,%f,%f)", tempWorld.actuatorOrienations[1].x, tempWorld.actuatorOrienations[1].y, tempWorld.actuatorOrienations[1].z );
-            // }
-            if(score < lowestScore){
-                lowestScore = score;
-                bestWorld = World(tempWorld);
-                bestAngles[0] = i;
-                bestAngles[1] = j;
-                actuatorLocs[0] = tempWorld.actuatorLocations[0];
-                actuatorLocs[1] = tempWorld.actuatorLocations[1];
-                // for(int k = 0; k < numActuators; k++){
-                //     bestAngles[k] = tempWorld.actuators[k].currentAngle;
-                // }
-            }
-        }
-    }
-
-    double time2 = omp_get_wtime();
-
-    printf("Complete!\nTime to brute search: %f \n", time2 - time1);
-
-    printf("\nLowest score was %f with angles: ", lowestScore);
-    for(int i = 0; i < numActuators; i++){
-        printf("%f, ", bestAngles[i]);
-    }
-=======
     // printf("Performing test move:\n");
     // World tempTest = World(test);
     // tempTest.moveActuators(0,45);
@@ -144,7 +66,6 @@ int main(int argc, char * argv[]){
     // }
     // printf("\nEndPoint: (%f,%f,%f)", tempTest.endPoint.x, tempTest.endPoint.y, tempTest.endPoint.z);
 
->>>>>>> 68fd4aaefd534968144ed50c30ffae6e89b9958b
 
     // //now to try all combinations of movements
     // //total possible states
@@ -203,7 +124,7 @@ int main(int argc, char * argv[]){
     printf("\n\n\nRunnng agent code\n");
     double timeA1 = omp_get_wtime();
 
-    Agent search = Agent(test);
+    Agent search = Agent(test, my_rank, nprocs);
     World solutionWorld = search.findPath();
 
     double timeA2 = omp_get_wtime();
