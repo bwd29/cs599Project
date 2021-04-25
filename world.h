@@ -3,6 +3,7 @@
 #include "vec.h"
 #include "actuator.h"
 #include <vector>
+#include <stdio.h>
 
 
 
@@ -15,6 +16,8 @@ class World{
         std::vector<Vec> actuatorOrienations;
 
         Vec endPoint;
+
+        Vec destination;
 
         DTYPE cost = 0;
 
@@ -33,6 +36,7 @@ class World{
             actuatorLocations = copy->actuatorLocations;
             actuatorOrienations = copy->actuatorOrienations;
             endPoint = copy->endPoint;
+            destination = copy->destination;
         }
 
         //add an actuator
@@ -80,12 +84,30 @@ class World{
         }
 
         //check distance from the endpoint to a vec
-        DTYPE checkDist(Vec destination){
+        DTYPE checkDist(){
             return endPoint.dist(destination);
         }
 
         DTYPE calcScore(Vec dest){
             return cost + 10000000*endPoint.dist(dest);
+        }
+
+        void print(){
+            printf("\nActuator loations:");
+            for(int i = 0; i < actuators.size(); i++){
+                printf("\n(%f, %f, %f)", actuatorLocations[i].x, actuatorLocations[i].y, actuatorLocations[i].z);
+            }
+
+            printf("\nActuator orientations:");
+            for(int i = 0; i < actuators.size(); i++){
+                printf("\n(%f, %f, %f)", actuatorOrienations[i].x, actuatorOrienations[i].y, actuatorOrienations[i].z);
+            }
+
+            printf("\nActuator angles:\n(");
+            for(int i = 0; i < actuators.size(); i++){
+                printf(" %f, ", actuators[i].currentAngle);
+            }
+            printf(")");
         }
 
 
