@@ -2,7 +2,10 @@
 
 #include "node.h"
 #include <queue>
+#include <string>
+#include <unordered_map>
 
+#define MAXQ 10
 
 class Agent{
 
@@ -10,13 +13,15 @@ class Agent{
 
         Node * bestNode;
         std::deque<Node*> openSet;
+        std::vector<unsigned int> visited;
+
 
 
 
         Agent(World startWorld){
             //make a starter node
             Node * start = new Node(startWorld);
-            // start->cost = start->worldState.checkDist();
+            // start->cost = start->worldState.checkDist();sss
             openSet.push_back(start);
             bestNode = start;
 
@@ -28,10 +33,13 @@ class Agent{
                 count++;
                 Node * currentNode = openSet.front();
 
+                //hash the current node, and add to visited
+                visited.insert(std::lower_bound(visited.begin(),visited.end(),currentNode->getHash()),currentNode->getHash());
+                
 
                 openSet.pop_front();
 
-                currentNode->addChildren();
+                currentNode->addChildren(visited);
                 currentNode->rankChildren();
 
                 for(int i = currentNode->children.size() -1; i >= 0; i--){
@@ -42,7 +50,11 @@ class Agent{
                 }
                 // openSet.push_back(currentNode->children[0]);
 
-                // std::sort(openSet.begin(), openSet.end());
+                std::sort(openSet.begin(), openSet.end());
+
+                while(openSet.size() > MAXQ){
+                    openSet.pop_back();
+                }
 
                 // currentNode->worldState.print();
                 // printf("\nCost: %f\n\n", currentNode->cost);
@@ -62,4 +74,6 @@ class Agent{
 
 
         }
+
+
 };
