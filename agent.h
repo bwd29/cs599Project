@@ -15,7 +15,7 @@ class Agent{
 
         Node * bestNode;
         std::deque<Node*> openSet;
-        std::vector<unsigned int> visited;
+        std::vector<unsigned long long> visited;
         int my_rank;
         int nprocs;
         int numAct;
@@ -36,67 +36,69 @@ class Agent{
 
 
         bool sync(){
+            MPI_Request request;
+            MPI_Status status;
+            MPI_Barrier(MPI_COMM_WORLD);
             // sync the visited
 
             unsigned int recvCount[nprocs];
-            unsigned int visitedCount = visited.size();
-            MPI_Gather( &visitedCount, 1 , MPI_UNSIGNED , recvCount, 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD);
+            unsigned long long visitedCount = visited.size();
+            MPI_Igather( &visitedCount, 1 , MPI_UNSIGNED , recvCount, 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD, &request);
 
             unsigned int visitedSize = 0;
             for(int i = 0; i < nprocs; i ++){
                 visitedSize += recvCount[i];
                 printf("%d,", recvCount[i]);
             }
-            unsigned int * visitedBuffer = (unsigned int *)malloc(visitedSize *sizeof(unsigned int));
+            unsigned long long * visitedBuffer = (unsigned long long *)malloc(visitedSize *sizeof(unsigned long long));
 
-            MPI_Request request;
+    
             for(int i = 0; i < nprocs; i++){
-                MPI_Isend( &visited[0], visitedCount , MPI_UNSIGNED , i , 0, MPI_COMM_WORLD , &request);
+                MPI_Isend( &visited[0], visitedCount , MPI_UNSIGNED_LONG_LONG , i , 0, MPI_COMM_WORLD , &request);
             } 
 
-            MPI_Status status;
             unsigned int runningTotal = 0;
             for(int i = 0; i < nprocs; i++){
-                MPI_Recv( &visitedBuffer[runningTotal], recvCount[i], MPI_UNSIGNED , i , 0 , MPI_COMM_WORLD , &status);
+                MPI_Recv( &visitedBuffer[runningTotal], recvCount[i], MPI_UNSIGNED_LONG_LONG , i , 0 , MPI_COMM_WORLD , &status);
                 runningTotal += recvCount[i];
             }
 
             //make new vector
 
-            std::vector<unsigned int> tmpVisited(visitedBuffer, visitedBuffer + visitedSize);
+            std::vector<unsigned long long> tmpVisited(visitedBuffer, visitedBuffer + visitedSize);
             std::sort(tmpVisited.begin(), tmpVisited.end());
-            std::vector<unsigned int>::iterator idx;
+            std::vector<unsigned long long>::iterator idx;
             idx = std::unique(tmpVisited.begin(), tmpVisited.end());
             tmpVisited.resize(std::distance(tmpVisited.begin(), idx));
 
             visited = tmpVisited;
 
             //sync the opensets
-
+             MPI_Barrier(MPI_COMM_WORLD);
             
 
-            //sync the best node
+            // sync the best node
             char * nodePack;
-            unsigned int packSize = bestNode->packNode(nodePack);
+            unsigned int packSize = bestNode->packNode(&nodePack);
             for(int i  = 0; i < nprocs; i++){
                 if(i != my_rank){
                     MPI_Isend(nodePack, packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &request);
                 }
             }
 
-            char * recvPack = (char *)malloc(packSize);
-            for(int i = 0; i < nprocs; i++){
-                if(my_rank != 0){
-                    MPI_Recv( recvPack , packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &status);
-                    Node * tmpNode = new Node(recvPack, numAct);
-                    if(bestNode->cost > tmpNode->cost){
-                        bestNode = tmpNode;
-                    } else {
-                        // free(tmpNode);
-                    }
-                }
+            // char * recvPack = (char *)malloc(packSize);
+            // for(int i = 0; i < nprocs; i++){
+            //     if(my_rank != i){
+            //         MPI_Recv( recvPack , packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &status);
+            //         Node * tmpNode = new Node(recvPack, numAct);
+            //         if(bestNode->cost > tmpNode->cost){
+            //             bestNode = tmpNode;
+            //         } else {
+            //             // free(tmpNode);
+            //         }
+            //     }
 
-            }
+            // }
 
             if(bestNode->cost > -0.000001 && bestNode->cost < 0.000001){
                 return false;

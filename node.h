@@ -4,7 +4,6 @@
 #include "world.h"
 #include <string>
 
-
 class Node{
 
     public:
@@ -68,7 +67,7 @@ class Node{
 
         //method to add children
 
-        void addChildren(std::vector<unsigned int> visited){
+        void addChildren(std::vector<unsigned long long> visited){
             //get the number of actuators
             int numActuators = worldState.actuators.size();
 
@@ -145,22 +144,36 @@ class Node{
 
         }
 
-        unsigned int getHash(){
+        unsigned long long getHash(){
             std::string val = "";
             for(int i = 0; i < worldState.actuators.size(); i++){
                 val += std::to_string(worldState.actuators[i].currentAngle);
                 val += ",";
             }
-
-            return std::hash<std::string>{}(val);
+            size_t result = 2166136261U ;
+            std::string::const_iterator end = val.end() ;
+            for ( std::string::const_iterator iter = val.begin() ;
+                iter != end ;
+                ++ iter ) {
+                result = (16777619 * result)
+                        ^ static_cast< unsigned char >( *iter ) ;
+            }
+            return result ;
         }
 
 
-        unsigned int packNode(char * pack){
+        unsigned int packNode(char ** pack){
 
-            unsigned int worldPackSize = worldState.packWorld(pack);
+            char * worldPack;
+            unsigned int worldPackSize = worldState.packWorld(&worldPack);
 
             unsigned int packSize = worldPackSize;
+            
+            *pack = (char*)malloc(packSize);
+
+            for(int i = 0; i < worldPackSize; i++){
+                *pack[i] = worldPack[i];
+            }
 
             return packSize;
         }

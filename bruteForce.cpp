@@ -118,7 +118,7 @@ int main(int argc, char * argv[]){
     // printf("\nEndPoint: (%f,%f,%f)", bestWorld.endPoint.x, bestWorld.endPoint.y, bestWorld.endPoint.z);
 
 
-
+    MPI_Barrier(MPI_COMM_WORLD);
 
 
     printf("\n\n\nRunnng agent code\n");

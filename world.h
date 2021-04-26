@@ -114,12 +114,12 @@ class World{
             printf(")");
         }
 
-        unsigned int packWorld(char * pack){
+        unsigned int packWorld(char ** pack){
 
             char * tmpActPack;
             char * tmpVecPack;
-            unsigned int actuatorPackSize = actuators[0].packActuator(tmpActPack);
-            unsigned int vecPackSize = actuatorLocations[0].packVec(tmpVecPack);
+            unsigned int actuatorPackSize = actuators[0].packActuator(&tmpActPack);
+            unsigned int vecPackSize = actuatorLocations[0].packVec(&tmpVecPack);
             //free tmps?
 
             int numVectors = actuatorLocations.size()+actuatorOrientations.size()+2;
@@ -127,12 +127,12 @@ class World{
                                     vecPackSize*(numVectors) +
                                     actuatorPackSize*actuators.size();
             
-            pack = (char*)malloc(packSize);
+            *pack = (char*)malloc(packSize);
             for(int i = 0; i < actuators.size(); i++){
                 char * actPack;
-                actuators[i].packActuator(actPack);
+                actuators[i].packActuator(&actPack);
                 for(int j = 0; j < actuatorPackSize; j++){
-                    pack[i*actuatorPackSize + j] = actPack[j];
+                    *pack[i*actuatorPackSize + j] = actPack[j];
                 }
             }
 
@@ -140,18 +140,18 @@ class World{
             
             for(int i = 0; i < actuatorLocations.size(); i++){
                 char * vecPack;
-                actuatorLocations[i].packVec(vecPack);
+                actuatorLocations[i].packVec(&vecPack);
                 for(int j = 0; j < vecPackSize; j++){
-                    pack[packOffset + i*vecPackSize + j] = vecPack[j];
+                    *pack[packOffset + i*vecPackSize + j] = vecPack[j];
                 }
             }
 
             packOffset += actuatorLocations.size()*vecPackSize;
             for(int i = 0; i < actuatorOrientations.size(); i++){
                 char * vecPack;
-                actuatorOrientations[i].packVec(vecPack);
+                actuatorOrientations[i].packVec(&vecPack);
                 for(int j = 0; j < vecPackSize; j++){
-                    pack[packOffset + i*vecPackSize + j] = vecPack[j];
+                    *pack[packOffset + i*vecPackSize + j] = vecPack[j];
                 }
             }
 
@@ -159,18 +159,18 @@ class World{
 
             char* ptr1;
             char* ptr2;
-            endPoint.packVec(ptr1);
-            destination.packVec(ptr2);
+            endPoint.packVec(&ptr1);
+            destination.packVec(&ptr2);
             for(int i = 0; i < vecPackSize; i++){
-                pack[packOffset + i] = ptr1[i];
-                pack[packOffset + vecPackSize + i] = ptr2[i];
+                *pack[packOffset + i] = ptr1[i];
+                *pack[packOffset + vecPackSize + i] = ptr2[i];
             }
 
             packOffset += 2 * vecPackSize;
 
             char*ptr3 = (char*)(&cost);
             for(int i = 0; i < sizeof(DTYPE); i++){
-                pack[packOffset + i] = ptr3[i];
+                *pack[packOffset + i] = ptr3[i];
             }
 
             return packSize;
@@ -181,8 +181,8 @@ class World{
         void unpackWorld(char * pack, int numActuators){
             char * tmpActPack;
             char * tmpVecPack;
-            unsigned int actuatorPackSize = actuators[0].packActuator(tmpActPack);
-            unsigned int vecPackSize = actuatorLocations[0].packVec(tmpVecPack);
+            unsigned int actuatorPackSize = actuators[0].packActuator(&tmpActPack);
+            unsigned int vecPackSize = actuatorLocations[0].packVec(&tmpVecPack);
 
             for(int i = 0; i < numActuators; i++){
                 Actuator act = Actuator(&pack[i*actuatorPackSize]);
