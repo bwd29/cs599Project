@@ -149,6 +149,7 @@ class Node{
             std::string val = "";
             for(int i = 0; i < worldState.actuators.size(); i++){
                 val += std::to_string(worldState.actuators[i].currentAngle);
+                val += ",";
             }
 
             return std::hash<std::string>{}(val);

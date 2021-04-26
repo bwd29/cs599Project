@@ -7,7 +7,7 @@
 #include <mpi.h>
 
 #define MAXQ 10
-#define CHAINLENGTH 100
+#define CHAINLENGTH 1000
 
 class Agent{
 
@@ -69,7 +69,7 @@ class Agent{
             idx = std::unique(tmpVisited.begin(), tmpVisited.end());
             tmpVisited.resize(std::distance(tmpVisited.begin(), idx));
 
-           // visited = tmpVisited;
+            visited = tmpVisited;
 
             //sync the opensets
 
@@ -77,19 +77,49 @@ class Agent{
 
             //sync the best node
             char * nodePack;
-            unsigned int packSize = bestNode.packNode(pack);
+            unsigned int packSize = bestNode->packNode(nodePack);
             for(int i  = 0; i < nprocs; i++){
                 if(i != my_rank){
-                    MPI_Isend(noePack, packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &request);
+                    MPI_Isend(nodePack, packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &request);
                 }
             }
 
+            char * recvPack = (char *)malloc(packSize);
             for(int i = 0; i < nprocs; i++){
-                Node tmpNode = 
+                if(my_rank != 0){
+                    MPI_Recv( recvPack , packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &status);
+                    Node * tmpNode = new Node(recvPack, numAct);
+                    if(bestNode->cost > tmpNode->cost){
+                        bestNode = tmpNode;
+                    } else {
+                        // free(tmpNode);
+                    }
+                }
+
+            }
+
+            if(bestNode->cost > -0.000001 && bestNode->cost < 0.000001){
+                return false;
             }
 
             
             //assign the opensets
+
+
+
+
+
+
+
+
+
+
+
+            if(openSet.empty()){
+                return false;
+            }
+
+            return true;
 
         }
 
@@ -104,6 +134,7 @@ class Agent{
                     Node * currentNode = openSet.front();
 
                     //hash the current node, and add to visited
+                    
                     visited.insert(std::lower_bound(visited.begin(),visited.end(),currentNode->getHash()),currentNode->getHash());
                     
 
@@ -129,16 +160,12 @@ class Agent{
                     // currentNode->worldState.print();
                     // printf("\nCost: %f\n\n", currentNode->cost);
 
-                    if(currentNode->cost > -0.000001 && currentNode->cost < 0.000001){
-                        printf("\nVisited %u nodes\n", count);
-                        return currentNode->worldState;
-                    } else {
-                        if(currentNode->cost < bestNode->cost){
-                            bestNode = currentNode;
-                        }
+                    if(currentNode->cost < bestNode->cost){
+                        bestNode = currentNode;
                     }
 
                 }
+                chainCount = 0;
             }
 
             printf("\nVisited %u nodes\n", count);
