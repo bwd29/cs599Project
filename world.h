@@ -181,10 +181,10 @@ class World{
         }
 
         void unpackWorld(char * pack, int numActuators){
-            char * tmpActPack;
-            char * tmpVecPack;
-            unsigned int actuatorPackSize = actuators[0].packActuator(&tmpActPack);
-            unsigned int vecPackSize = actuatorLocations[0].packVec(&tmpVecPack);
+            // char * tmpActPack;
+            // char * tmpVecPack;
+            unsigned int actuatorPackSize = sizeof(DTYPE)*5; //actuators[0].packActuator(&tmpActPack);
+            unsigned int vecPackSize = sizeof(DTYPE)*3;//actuatorLocations[0].packVec(&tmpVecPack);
 
             for(int i = 0; i < numActuators; i++){
                 Actuator act = Actuator(&pack[i*actuatorPackSize]);

@@ -65,13 +65,13 @@ class Agent{
 
             MPI_Barrier(MPI_COMM_WORLD);
 
-            if(my_rank ==1) printf("\nRecive counts: ");
+            // if(my_rank ==1) printf("\nRecive counts: ");
             unsigned int visitedSize = 0;
             for(int i = 0; i < nprocs; i ++){
                 visitedSize += recvCount[i];
-                if(my_rank ==1) printf("%d,", recvCount[i]);
+                // if(my_rank ==1) printf("%d,", recvCount[i]);
             }
-            if(my_rank == 1) printf("\ntotal recived: %d,", visitedSize);
+            // if(my_rank == 1) printf("\ntotal recived: %d,", visitedSize);
 
             unsigned long long * visitedBuffer = (unsigned long long *)malloc(visitedSize *sizeof(unsigned long long));
 
@@ -106,7 +106,7 @@ class Agent{
                 visited.push_back(tmpVisited[i]);
             }
 
-            printf("\nrank: %d, visited size: %ld", my_rank, visited.size());
+            // printf("\nrank: %d, visited size: %ld", my_rank, visited.size());
 
             //sync the opensets
              MPI_Barrier(MPI_COMM_WORLD);
@@ -121,10 +121,17 @@ class Agent{
                 }
             }
 
+            MPI_Barrier(MPI_COMM_WORLD);
+            
+            // if(my_rank == 1) printf("\nSent data Packs");
+
+            MPI_Barrier(MPI_COMM_WORLD);
+
             char * recvPack = (char *)malloc(packSize);
             for(int i = 0; i < nprocs; i++){
                 if(my_rank != i){
                     MPI_Recv( recvPack , packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &status);
+                    // printf("\nrank %d recived pack from rank %d", my_rank, i);
                     Node * tmpNode = new Node(recvPack, numAct);
                     if(bestNode->cost > tmpNode->cost){
                         bestNode = tmpNode;
@@ -134,7 +141,7 @@ class Agent{
                 }
 
             }
-
+            // if(my_rank == 0) printf("\nbest cost: %f", bestNode->cost);
             if(bestNode->cost > -0.000001 && bestNode->cost < 0.000001){
                 return false;
             }
@@ -181,9 +188,9 @@ class Agent{
                     currentNode->rankChildren();
 
                     for(int i = currentNode->children.size() -1; i >= 0; i--){
-                        // if(currentNode->children[i]->cost < currentNode->cost){
+                        if(currentNode->children[i]->cost < currentNode->cost){
                             openSet.push_front(currentNode->children[i]);
-                        // }
+                        }
                         
                     }
                     // openSet.push_back(currentNode->children[0]);
