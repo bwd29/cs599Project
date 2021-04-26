@@ -42,20 +42,28 @@ class Agent{
             // sync the visited
 
             unsigned int recvCount[nprocs];
-            unsigned long long visitedCount = visited.size();
-            MPI_Igather( &visitedCount, 1 , MPI_UNSIGNED , recvCount, 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD, &request);
+            unsigned int visitedCount = visited.size();
+            // MPI_Igather( &visitedCount, 1 , MPI_UNSIGNED , recvCount, 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD, &request);
+            MPI_Bcast( &recvCount[my_rank] , 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD);
+
+            MPI_Barrier(MPI_COMM_WORLD);
 
             unsigned int visitedSize = 0;
             for(int i = 0; i < nprocs; i ++){
                 visitedSize += recvCount[i];
                 printf("%d,", recvCount[i]);
             }
+            printf("\n%d,", visitedSize);
+
             unsigned long long * visitedBuffer = (unsigned long long *)malloc(visitedSize *sizeof(unsigned long long));
 
     
             for(int i = 0; i < nprocs; i++){
                 MPI_Isend( &visited[0], visitedCount , MPI_UNSIGNED_LONG_LONG , i , 0, MPI_COMM_WORLD , &request);
             } 
+
+            MPI_Barrier(MPI_COMM_WORLD);
+
 
             unsigned int runningTotal = 0;
             for(int i = 0; i < nprocs; i++){
@@ -71,7 +79,8 @@ class Agent{
             idx = std::unique(tmpVisited.begin(), tmpVisited.end());
             tmpVisited.resize(std::distance(tmpVisited.begin(), idx));
 
-            visited = tmpVisited;
+            // visited.swap(tmpVisited);
+            
 
             //sync the opensets
              MPI_Barrier(MPI_COMM_WORLD);
@@ -80,11 +89,11 @@ class Agent{
             // sync the best node
             char * nodePack;
             unsigned int packSize = bestNode->packNode(&nodePack);
-            for(int i  = 0; i < nprocs; i++){
-                if(i != my_rank){
-                    MPI_Isend(nodePack, packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &request);
-                }
-            }
+            // for(int i  = 0; i < nprocs; i++){
+            //     if(i != my_rank){
+            //         MPI_Isend(nodePack, packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &request);
+            //     }
+            // }
 
             // char * recvPack = (char *)malloc(packSize);
             // for(int i = 0; i < nprocs; i++){
@@ -146,9 +155,9 @@ class Agent{
                     currentNode->rankChildren();
 
                     for(int i = currentNode->children.size() -1; i >= 0; i--){
-                        if(currentNode->children[i]->cost < currentNode->cost){
+                        // if(currentNode->children[i]->cost < currentNode->cost){
                             openSet.push_front(currentNode->children[i]);
-                        }
+                        // }
                         
                     }
                     // openSet.push_back(currentNode->children[0]);

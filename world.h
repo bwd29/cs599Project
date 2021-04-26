@@ -115,10 +115,12 @@ class World{
         }
 
         unsigned int packWorld(char ** pack){
+            // printf("1x,");
 
             char * tmpActPack;
             char * tmpVecPack;
             unsigned int actuatorPackSize = actuators[0].packActuator(&tmpActPack);
+            // printf("2x,");
             unsigned int vecPackSize = actuatorLocations[0].packVec(&tmpVecPack);
             //free tmps?
 
@@ -132,7 +134,7 @@ class World{
                 char * actPack;
                 actuators[i].packActuator(&actPack);
                 for(int j = 0; j < actuatorPackSize; j++){
-                    *pack[i*actuatorPackSize + j] = actPack[j];
+                    (*pack)[i*actuatorPackSize + j] = actPack[j];
                 }
             }
 
@@ -142,7 +144,7 @@ class World{
                 char * vecPack;
                 actuatorLocations[i].packVec(&vecPack);
                 for(int j = 0; j < vecPackSize; j++){
-                    *pack[packOffset + i*vecPackSize + j] = vecPack[j];
+                    (*pack)[packOffset + i*vecPackSize + j] = vecPack[j];
                 }
             }
 
@@ -151,7 +153,7 @@ class World{
                 char * vecPack;
                 actuatorOrientations[i].packVec(&vecPack);
                 for(int j = 0; j < vecPackSize; j++){
-                    *pack[packOffset + i*vecPackSize + j] = vecPack[j];
+                    (*pack)[packOffset + i*vecPackSize + j] = vecPack[j];
                 }
             }
 
@@ -162,15 +164,15 @@ class World{
             endPoint.packVec(&ptr1);
             destination.packVec(&ptr2);
             for(int i = 0; i < vecPackSize; i++){
-                *pack[packOffset + i] = ptr1[i];
-                *pack[packOffset + vecPackSize + i] = ptr2[i];
+                (*pack)[packOffset + i] = ptr1[i];
+                (*pack)[packOffset + vecPackSize + i] = ptr2[i];
             }
 
             packOffset += 2 * vecPackSize;
 
             char*ptr3 = (char*)(&cost);
             for(int i = 0; i < sizeof(DTYPE); i++){
-                *pack[packOffset + i] = ptr3[i];
+                (*pack)[packOffset + i] = ptr3[i];
             }
 
             return packSize;

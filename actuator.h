@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vec.h"
+#include <stdio.h>
 
 class Actuator{
 
@@ -48,6 +49,7 @@ class Actuator{
         }
 
         unsigned int packActuator(char ** pack){
+            // printf("1y,");
             unsigned int packSize = sizeof(DTYPE)*5;
             *pack = (char *)malloc(packSize);
             char*ptr1 = (char*)(&currentAngle);
@@ -55,13 +57,15 @@ class Actuator{
             char*ptr3 = (char*)(&maxAngle);
             char*ptr4 = (char*)(&stepSize);
             char*ptr5 = (char*)(&speed);
+            // printf("2y,");
             for(int i = 0; i < sizeof(DTYPE); i++){
-                *pack[0*sizeof(DTYPE) + i] = ptr1[i];
-                *pack[1*sizeof(DTYPE) + i] = ptr2[i];
-                *pack[2*sizeof(DTYPE) + i] = ptr3[i];
-                *pack[3*sizeof(DTYPE) + i] = ptr4[i];
-                *pack[4*sizeof(DTYPE) + i] = ptr5[i];
+                (*pack)[0*sizeof(DTYPE) + i] = ptr1[i];
+                (*pack)[1*sizeof(DTYPE) + i] = ptr2[i];
+                (*pack)[2*sizeof(DTYPE) + i] = ptr3[i];
+                (*pack)[3*sizeof(DTYPE) + i] = ptr4[i];
+                (*pack)[4*sizeof(DTYPE) + i] = ptr5[i];
             }
+            // printf("3y,");
 
             return packSize;
         }

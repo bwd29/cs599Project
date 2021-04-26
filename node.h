@@ -172,7 +172,7 @@ class Node{
             *pack = (char*)malloc(packSize);
 
             for(int i = 0; i < worldPackSize; i++){
-                *pack[i] = worldPack[i];
+                (*pack)[i] = worldPack[i];
             }
 
             return packSize;

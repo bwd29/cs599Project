@@ -134,9 +134,9 @@ class Vec{
             char*ptr2 = (char*)(&y);
             char*ptr3 = (char*)(&z);
             for(int i = 0; i < sizeof(DTYPE); i++){
-                *pack[0*sizeof(DTYPE) + i] = ptr1[i];
-                *pack[1*sizeof(DTYPE) + i] = ptr2[i];
-                *pack[2*sizeof(DTYPE) + i] = ptr3[i];
+                (*pack)[0*sizeof(DTYPE) + i] = ptr1[i];
+                (*pack)[1*sizeof(DTYPE) + i] = ptr2[i];
+                (*pack)[2*sizeof(DTYPE) + i] = ptr3[i];
             }
 
             return packSize;
