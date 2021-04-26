@@ -44,16 +44,34 @@ class Agent{
             unsigned int recvCount[nprocs];
             unsigned int visitedCount = visited.size();
             // MPI_Igather( &visitedCount, 1 , MPI_UNSIGNED , recvCount, 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD, &request);
-            MPI_Bcast( &recvCount[my_rank] , 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD);
+            // MPI_Bcast( &recvCount[my_rank] , 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD);
+
+            for(int i = 0; i < nprocs; i++){
+                if(i == my_rank){
+                    recvCount[i] = visitedCount;
+                } else {
+                    MPI_Isend( &visitedCount , 1 , MPI_UNSIGNED , i , 0 , MPI_COMM_WORLD, &request);
+                }
+            }
+            MPI_Barrier(MPI_COMM_WORLD);
+
+            for(int i = 0; i < nprocs; i++){
+                if(i == my_rank){
+                    // recvCount[i] = visitedCount;
+                } else {
+                    MPI_Recv( &recvCount[i] ,1 , MPI_UNSIGNED , i , 0 , MPI_COMM_WORLD , &status);
+                }       
+            }
 
             MPI_Barrier(MPI_COMM_WORLD);
 
+            if(my_rank ==1) printf("\nRecive counts: ");
             unsigned int visitedSize = 0;
             for(int i = 0; i < nprocs; i ++){
                 visitedSize += recvCount[i];
-                printf("%d,", recvCount[i]);
+                if(my_rank ==1) printf("%d,", recvCount[i]);
             }
-            printf("\n%d,", visitedSize);
+            if(my_rank == 1) printf("\ntotal recived: %d,", visitedSize);
 
             unsigned long long * visitedBuffer = (unsigned long long *)malloc(visitedSize *sizeof(unsigned long long));
 
@@ -71,6 +89,9 @@ class Agent{
                 runningTotal += recvCount[i];
             }
 
+            
+            MPI_Barrier(MPI_COMM_WORLD);
+
             //make new vector
 
             std::vector<unsigned long long> tmpVisited(visitedBuffer, visitedBuffer + visitedSize);
@@ -80,7 +101,12 @@ class Agent{
             tmpVisited.resize(std::distance(tmpVisited.begin(), idx));
 
             // visited.swap(tmpVisited);
-            
+            visited.clear();
+            for(int i = 0; i<tmpVisited.size();i++){
+                visited.push_back(tmpVisited[i]);
+            }
+
+            printf("\nrank: %d, visited size: %ld", my_rank, visited.size());
 
             //sync the opensets
              MPI_Barrier(MPI_COMM_WORLD);
@@ -89,25 +115,25 @@ class Agent{
             // sync the best node
             char * nodePack;
             unsigned int packSize = bestNode->packNode(&nodePack);
-            // for(int i  = 0; i < nprocs; i++){
-            //     if(i != my_rank){
-            //         MPI_Isend(nodePack, packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &request);
-            //     }
-            // }
+            for(int i  = 0; i < nprocs; i++){
+                if(i != my_rank){
+                    MPI_Isend(nodePack, packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &request);
+                }
+            }
 
-            // char * recvPack = (char *)malloc(packSize);
-            // for(int i = 0; i < nprocs; i++){
-            //     if(my_rank != i){
-            //         MPI_Recv( recvPack , packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &status);
-            //         Node * tmpNode = new Node(recvPack, numAct);
-            //         if(bestNode->cost > tmpNode->cost){
-            //             bestNode = tmpNode;
-            //         } else {
-            //             // free(tmpNode);
-            //         }
-            //     }
+            char * recvPack = (char *)malloc(packSize);
+            for(int i = 0; i < nprocs; i++){
+                if(my_rank != i){
+                    MPI_Recv( recvPack , packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &status);
+                    Node * tmpNode = new Node(recvPack, numAct);
+                    if(bestNode->cost > tmpNode->cost){
+                        bestNode = tmpNode;
+                    } else {
+                        // free(tmpNode);
+                    }
+                }
 
-            // }
+            }
 
             if(bestNode->cost > -0.000001 && bestNode->cost < 0.000001){
                 return false;

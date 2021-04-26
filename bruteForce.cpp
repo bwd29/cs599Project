@@ -6,6 +6,7 @@
 #include "omp.h"
 
 // mpic++ bruteForce.cpp -o test -lm -fopenmp (-g or -o3)
+// mpirun -np 2 -hostfile myhostfile.txt ./test
 
 // run a brute force with actuators
 int main(int argc, char * argv[]){
