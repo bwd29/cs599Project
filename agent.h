@@ -212,7 +212,7 @@ class Agent{
                 chainCount = 0;
             }
 
-            printf("\nVisited %u nodes\n", count);
+            if(my_rank ==0) printf("\nVisited %u nodes\n", count);
             return bestNode->worldState;
 
 

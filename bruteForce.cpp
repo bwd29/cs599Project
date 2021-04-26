@@ -26,7 +26,7 @@ int main(int argc, char * argv[]){
     Vec endPoint = Vec(2, 0, 0);
 
     // first build the world
-    printf("Building the world...");
+    if(my_rank ==0)  printf("Building the world...");
     World test(endPoint);
     for(int i = 0; i < numActuators; i++){
         Vec loc(i, 0, 0);
@@ -37,7 +37,7 @@ int main(int argc, char * argv[]){
 
     test.destination = destination;
 
-    printf("Complete\n");
+    if(my_rank ==0)  printf("Complete\n");
 
 
 
@@ -122,16 +122,19 @@ int main(int argc, char * argv[]){
     MPI_Barrier(MPI_COMM_WORLD);
 
 
-    printf("\n\n\nRunnng agent code\n");
+    if(my_rank ==0) printf("\n\n\nRunnng agent code\n");
     double timeA1 = omp_get_wtime();
 
     Agent search = Agent(test, my_rank, nprocs);
     World solutionWorld = search.findPath();
 
     double timeA2 = omp_get_wtime();
-    printf("Solution found with time: %f", timeA2 - timeA1);
+    if(my_rank ==0)  printf("Solution found with time: %f", timeA2 - timeA1);
 
-    solutionWorld.print();
+    if(my_rank ==0) solutionWorld.print();
+
+   MPI_Barrier(MPI_COMM_WORLD);
+
 
 
     printf("\n");
