@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <mpi.h>
 
-#define MAXQ 10
+#define MAXQ 100
 #define CHAINLENGTH 1000
 
 class Agent{
@@ -43,6 +43,7 @@ class Agent{
 
             unsigned int recvCount[nprocs];
             unsigned int visitedCount = visited.size();
+            printf("\nrank: %d send size: %d",my_rank, visitedCount);
             // MPI_Igather( &visitedCount, 1 , MPI_UNSIGNED , recvCount, 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD, &request);
             // MPI_Bcast( &recvCount[my_rank] , 1 , MPI_UNSIGNED , my_rank , MPI_COMM_WORLD);
 
@@ -65,13 +66,13 @@ class Agent{
 
             MPI_Barrier(MPI_COMM_WORLD);
 
-            // if(my_rank ==1) printf("\nRecive counts: ");
+            if(my_rank ==1) printf("\nRecive counts: ");
             unsigned int visitedSize = 0;
             for(int i = 0; i < nprocs; i ++){
                 visitedSize += recvCount[i];
-                // if(my_rank ==1) printf("%d,", recvCount[i]);
+                if(my_rank ==1) printf("%d,", recvCount[i]);
             }
-            // if(my_rank == 1) printf("\ntotal recived: %d,", visitedSize);
+            if(my_rank == 1) printf("\ntotal recived: %d,", visitedSize);
 
             unsigned long long * visitedBuffer = (unsigned long long *)malloc(visitedSize *sizeof(unsigned long long));
 
@@ -98,7 +99,7 @@ class Agent{
             std::sort(tmpVisited.begin(), tmpVisited.end());
             std::vector<unsigned long long>::iterator idx;
             idx = std::unique(tmpVisited.begin(), tmpVisited.end());
-            tmpVisited.resize(std::distance(tmpVisited.begin(), idx));
+            tmpVisited.erase(idx, tmpVisited.end());
 
             // visited.swap(tmpVisited);
             visited.clear();
@@ -106,7 +107,7 @@ class Agent{
                 visited.push_back(tmpVisited[i]);
             }
 
-            // printf("\nrank: %d, visited size: %ld", my_rank, visited.size());
+            printf("\nrank: %d, visited size: %ld", my_rank, visited.size());
 
             //sync the opensets
              MPI_Barrier(MPI_COMM_WORLD);
@@ -123,7 +124,7 @@ class Agent{
 
             MPI_Barrier(MPI_COMM_WORLD);
             
-            // if(my_rank == 1) printf("\nSent data Packs");
+            if(my_rank == 1) printf("\nSent data Packs");
 
             MPI_Barrier(MPI_COMM_WORLD);
 
@@ -131,9 +132,10 @@ class Agent{
             for(int i = 0; i < nprocs; i++){
                 if(my_rank != i){
                     MPI_Recv( recvPack , packSize, MPI_CHAR , i , 0 , MPI_COMM_WORLD , &status);
-                    // printf("\nrank %d recived pack from rank %d", my_rank, i);
+                    printf("\nrank %d recived pack from rank %d", my_rank, i);
                     Node * tmpNode = new Node(recvPack, numAct);
                     if(bestNode->cost > tmpNode->cost){
+                        printf(".");
                         bestNode = tmpNode;
                     } else {
                         // free(tmpNode);
@@ -141,8 +143,9 @@ class Agent{
                 }
 
             }
-            // if(my_rank == 0) printf("\nbest cost: %f", bestNode->cost);
+            printf("\nmy rank: %d, best cost: %f",my_rank, bestNode->cost);
             if(bestNode->cost > -0.000001 && bestNode->cost < 0.000001){
+                printf("\nFound Node");
                 return false;
             }
 
@@ -160,6 +163,7 @@ class Agent{
 
 
             if(openSet.empty()){
+                printf("\nopenset empty");
                 return false;
             }
 
@@ -177,20 +181,21 @@ class Agent{
                     chainCount++;
                     Node * currentNode = openSet.front();
 
-                    //hash the current node, and add to visited
-                    
-                    visited.insert(std::lower_bound(visited.begin(),visited.end(),currentNode->getHash()),currentNode->getHash());
-                    
-
                     openSet.pop_front();
 
+                    visited.insert(std::lower_bound(visited.begin(),visited.end(),currentNode->getHash()),currentNode->getHash());
+                    
                     currentNode->addChildren(visited);
                     currentNode->rankChildren();
 
-                    for(int i = currentNode->children.size() -1; i >= 0; i--){
-                        if(currentNode->children[i]->cost < currentNode->cost){
-                            openSet.push_front(currentNode->children[i]);
+                    for(int i = 0; i  < currentNode->children.size(); i++){
+                        bool beenThere = std::binary_search(visited.begin(), visited.end(), currentNode->children[i]->getHash());
+                        if(!beenThere){
+                            if(currentNode->children[i]->cost < currentNode->cost){
+                                openSet.push_front(currentNode->children[i]);
+                            }
                         }
+
                         
                     }
                     // openSet.push_back(currentNode->children[0]);
@@ -206,11 +211,14 @@ class Agent{
 
                     if(currentNode->cost < bestNode->cost){
                         bestNode = currentNode;
+                        // bestNode = new Node(currentNode);
                     }
 
                 }
                 chainCount = 0;
             }
+
+            MPI_Barrier(MPI_COMM_WORLD);
 
             if(my_rank ==0) printf("\nVisited %u nodes\n", count);
             return bestNode->worldState;

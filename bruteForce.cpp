@@ -121,12 +121,27 @@ int main(int argc, char * argv[]){
 
     MPI_Barrier(MPI_COMM_WORLD);
 
+    if(my_rank == 0) printf("\nCheck Packing");
+    char * packTest;
+    test.packWorld(&packTest);
+    World tmpTest = World(packTest,numActuators);
+
+    if(my_rank == 0){
+        printf("\n\nPacked ->");
+        test.print();
+        printf("\n\nUnpacked ->");
+        tmpTest.print();
+    }
+
+
 
     if(my_rank ==0) printf("\n\n\nRunnng agent code\n");
     double timeA1 = omp_get_wtime();
 
     Agent search = Agent(test, my_rank, nprocs);
     World solutionWorld = search.findPath();
+
+   MPI_Barrier(MPI_COMM_WORLD);
 
     double timeA2 = omp_get_wtime();
     if(my_rank ==0)  printf("Solution found with time: %f", timeA2 - timeA1);
@@ -138,6 +153,8 @@ int main(int argc, char * argv[]){
 
 
     printf("\n");
+
+    return 0;
 
 
 }
