@@ -7,7 +7,7 @@
 #include <mpi.h>
 
 #define MAXQ 10
-#define CHAINLENGTH 10000
+#define CHAINLENGTH 1000
 
  bool hashcmp(std::string a, std::string b){
      for(int i = 0; i < SHA256_DIGEST_LENGTH; i++){
@@ -38,10 +38,13 @@ class Agent{
         int nprocs;
         int numAct;
 
+        double syncTime = 0;
+        int chainlength;
 
 
 
-        Agent(World startWorld, int rank = 0, int np = 1){
+
+        Agent(World startWorld, int chain, int rank = 0, int np = 1){
             //make a starter node
             Node * start = new Node(startWorld);
             // start->cost = start->worldState.checkDist();sss
@@ -50,13 +53,17 @@ class Agent{
             numAct = startWorld.actuators.size();
             my_rank = rank;
             nprocs = np;
+            chainlength = chain;
         }
 
 
         bool sync(){
+
+            double syncTime1 = omp_get_wtime();
+
             MPI_Request request;
             MPI_Status status;
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
             // sync the visited
 
             unsigned int recvCount[nprocs];
@@ -72,7 +79,7 @@ class Agent{
                     MPI_Isend( &visitedCount , 1 , MPI_UNSIGNED , i , 0 , MPI_COMM_WORLD, &request);
                 }
             }
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
 
             for(int i = 0; i < nprocs; i++){
                 if(i == my_rank){
@@ -82,7 +89,7 @@ class Agent{
                 }       
             }
 
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
 
             // if(my_rank ==0) printf("\nRecive counts: ");
             unsigned int visitedSize = 0;
@@ -105,7 +112,7 @@ class Agent{
                 MPI_Isend( visitedStream, visitedCount*SHA256_DIGEST_LENGTH , MPI_CHAR , i , 0, MPI_COMM_WORLD , &request);
             } 
 
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
 
 
             unsigned int runningTotal = 0;
@@ -115,7 +122,7 @@ class Agent{
             }
 
             
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
 
             //make new vector
              
@@ -172,7 +179,7 @@ class Agent{
             // printf("\nrank: %d, visited size: %ld", my_rank, visited.size());
 
             //sync the opensets
-             MPI_Barrier(MPI_COMM_WORLD);
+            //  MPI_Barrier(MPI_COMM_WORLD);
             
 
             // sync the best node
@@ -184,11 +191,11 @@ class Agent{
                 }
             }
 
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
             
             // if(my_rank == 1) printf("\nSent data Packs");
 
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
 
             char * recvPack = (char *)malloc(packSize);
             for(int i = 0; i < nprocs; i++){
@@ -262,7 +269,7 @@ class Agent{
                 MPI_Isend( openStream, openSize*packSize , MPI_CHAR , i , 0, MPI_COMM_WORLD , &request);
             } 
 
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
 
 
             runningTotal = 0;
@@ -311,13 +318,15 @@ class Agent{
                 openSet.push_back(tmpSet[i]);
             }
             
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
 
             // printf("\nRank: %d, set size: %ld", my_rank, openSet.size());
 
             std::sort(openSet.begin(), openSet.end());
 
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
+
+            syncTime += omp_get_wtime() - syncTime1;
 
             return true;
 
@@ -334,7 +343,7 @@ class Agent{
 
                 // MPI_Barrier(MPI_COMM_WORLD);
 
-                while(!openSet.empty() && chainCount < CHAINLENGTH){
+                while(!openSet.empty() && chainCount < chainlength){
                     // if(my_rank == 0)  printf("\n%d,%da",my_rank,chainCount);
                     
                     
@@ -435,7 +444,7 @@ class Agent{
 
             MPI_Barrier(MPI_COMM_WORLD);
 
-            // if(my_rank ==0) printf("\nVisited %u nodes\n", count);
+            if(my_rank ==0) printf("\nVisited %ld nodes\n", visited.size());
             return bestNode->worldState;
 
 
