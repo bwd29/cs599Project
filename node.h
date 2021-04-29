@@ -77,9 +77,9 @@ class Node{
 
             // add children based on possible moves
 
-            int i;
+            // int i;
             // #pragma omp parallel for shared(i) num_threads(numActuators)
-            for(i = 0; i < numActuators; i++){
+            for(int i = 0; i < numActuators; i++){
                 //try to move actuator by stepsize up
                 if(worldState.actuators[i].checkRotate(worldState.actuators[i].stepSize)){
                     //make new world
@@ -95,9 +95,9 @@ class Node{
 
                     //push back child on node vector
                     // if(!beenThere){
-                        omp_set_lock(&pushLock);
+                        // omp_set_lock(&pushLock);
                         children.push_back(newNode); 
-                        omp_unset_lock(&pushLock);
+                        // omp_unset_lock(&pushLock);
                     // }
 
                 }
@@ -118,9 +118,9 @@ class Node{
                     
                     //push back child on node vector
                     // if(!beenThere){
-                        omp_set_lock(&pushLock);
+                        // omp_set_lock(&pushLock);
                         children.push_back(newNode); 
-                        omp_unset_lock(&pushLock);
+                        // omp_unset_lock(&pushLock);
                     // }
                 }
 

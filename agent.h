@@ -7,7 +7,7 @@
 #include <mpi.h>
 
 #define MAXQ 10
-#define CHAINLENGTH 1000
+#define CHAINLENGTH 10000
 
  bool hashcmp(std::string a, std::string b){
      for(int i = 0; i < SHA256_DIGEST_LENGTH; i++){
@@ -216,7 +216,7 @@ class Agent{
 
 
             unsigned int openSize = openSet.size();
-            printf("\nRank: %d, Openset size: %d", my_rank, openSize);        
+            // printf("\nRank: %d, Openset size: %d", my_rank, openSize);        
             for(int i = 0; i < nprocs; i++){
                 if(i == my_rank){
                     recvCount[i] = openSize;
@@ -238,10 +238,10 @@ class Agent{
             for(int i = 0; i < nprocs; i ++){
                 totalOpenSize += recvCount[i];
             }
-            printf("\nRank: %d, totalOpenSize: %d", my_rank, totalOpenSize);
+            // printf("\nRank: %d, totalOpenSize: %d", my_rank, totalOpenSize);
 
             if(totalOpenSize == 0){
-                printf("\nopenset empty");
+                // printf("\nopenset empty");
                 return false;
             }
 
@@ -281,7 +281,7 @@ class Agent{
                 std::string tmpHash = tmp->getHash();
                 if(std::binary_search(openHash.begin(), openHash.end(), tmpHash)){
                     // dont add duplicates
-                    printf("\nduplicate");
+                    // printf("\nduplicate");
                 }else{
                     openHash.insert(std::lower_bound(openHash.begin(), openHash.end(), tmpHash),tmpHash);
                     openSet.push_back(tmp);
@@ -290,7 +290,7 @@ class Agent{
                 
             }
 
-            if(my_rank == 0) printf("\nTotal uniques openset: %ld", openSet.size());
+            // if(my_rank == 0) printf("\nTotal uniques openset: %ld", openSet.size());
 
             unsigned int nodesPerRank = openSet.size() / nprocs;
             
@@ -311,9 +311,9 @@ class Agent{
                 openSet.push_back(tmpSet[i]);
             }
             
-            // MPI_Barrier(MPI_COMM_WORLD);
+            MPI_Barrier(MPI_COMM_WORLD);
 
-            printf("\nRank: %d, set size: %ld", my_rank, openSet.size());
+            // printf("\nRank: %d, set size: %ld", my_rank, openSet.size());
 
             std::sort(openSet.begin(), openSet.end());
 
@@ -328,25 +328,34 @@ class Agent{
             unsigned int count = 0;
             unsigned int chainCount = 0;
             while(sync()){
-                if(my_rank ==0) printf("\nSYNCHED\n");
+                // if(my_rank ==0) printf("\nSYNCHED\n");
                 // unsigned int visitedStart = visited.size();
                 // visited.resize(visited.size()+CHAINLENGTH);
 
-                MPI_Barrier(MPI_COMM_WORLD);
+                // MPI_Barrier(MPI_COMM_WORLD);
 
                 while(!openSet.empty() && chainCount < CHAINLENGTH){
-
+                    // if(my_rank == 0)  printf("\n%d,%da",my_rank,chainCount);
                     
                     
                     Node * currentNode = openSet.front();
 
+                    // if(my_rank == 0)  printf("\n%d,%db",my_rank,chainCount);
+
                     openSet.pop_front();
+
+                    // if(my_rank == 0)  printf("\n%d,%dc",my_rank,chainCount);
                     
                     bool check = std::binary_search(visited.begin(), visited.end(), currentNode->getHash());
+                    
+                    // if(my_rank == 0)  printf("\n%d,%dd",my_rank,chainCount);
 
+                    chainCount++;
                     if(!check){
+                        // if(my_rank == 0)  printf("\n%d,%dd1",my_rank,chainCount);
+
                         count++;
-                        chainCount++;
+                       
 
                         
                     //    printf("a");
@@ -359,6 +368,9 @@ class Agent{
                         // visited.push_back(hash);
                         // std::sort(visited.begin(),visited.end());
                         visited.insert(std::lower_bound(visited.begin(),visited.end(),currentNode->getHash()),currentNode->getHash());
+
+                        // if(my_rank == 0)  printf("\n%d,%dd2",my_rank,chainCount);
+
                         // std::sort(visited.begin(),visited.end());
                         
                         // if(count != visited.size()){
@@ -367,8 +379,11 @@ class Agent{
                         // }
                         
                         currentNode->addChildren();
+                        // if(my_rank == 0)  printf("\n%d,%dd2a",my_rank,chainCount);
+
                         currentNode->rankChildren();
                         // printf("\nnum chldren: %ld", currentNode->children.size());
+                        // if(my_rank == 0)  printf("\n%d,%dd3",my_rank,chainCount);
 
                         // printf("b");
                         for(int i = 0; i  < currentNode->children.size(); i++){
@@ -387,7 +402,8 @@ class Agent{
                         // openSet.push_back(currentNode->children[0]);
 
                         // printf("\nopen set size A: %ld", openSet.size());
-                        
+                        // if(my_rank == 0)  printf("\n%d,%dd4",my_rank,chainCount);
+
                         std::sort(openSet.begin(), openSet.end());
 
                         while(openSet.size() > MAXQ){
@@ -395,6 +411,7 @@ class Agent{
                         }
 
                         // printf("\nopen set size B: %ld", openSet.size());
+                        // if(my_rank == 0)  printf("\n%d,%dd5",my_rank,chainCount);
 
                         // currentNode->worldState.print();
                         // printf("\nCost: %f\n\n", currentNode->cost);
@@ -403,16 +420,22 @@ class Agent{
                             bestNode = currentNode;
                             // bestNode = new Node(currentNode);
                         }
+                        // if(my_rank == 0)  printf("\n%d,%dd5",my_rank,chainCount);
+
                     }
 
+                    // if(my_rank == 0)  printf("\n%d,%de",my_rank,chainCount);
+
+
                 }
+                
                 chainCount = 0;
-                printf("\nrank: %d, current visted: %d, visited size %ld", my_rank, count, visited.size());
+                // printf("\nrank: %d, current visted: %d, visited size %ld", my_rank, count, visited.size());
             }
 
             MPI_Barrier(MPI_COMM_WORLD);
 
-            if(my_rank ==0) printf("\nVisited %u nodes\n", count);
+            // if(my_rank ==0) printf("\nVisited %u nodes\n", count);
             return bestNode->worldState;
 
 
