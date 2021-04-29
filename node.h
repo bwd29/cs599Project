@@ -3,6 +3,8 @@
 #include <algorithm>
 #include "world.h"
 #include <string>
+#include <openssl/sha.h>
+#include <cstring>
 
 class Node{
 
@@ -18,6 +20,8 @@ class Node{
 
         // a pointer to the parent node
         Node * parent;
+
+        // unsigned char hash[SHA256_DIGEST_LENGTH];
 
         DTYPE cost;
 
@@ -67,7 +71,7 @@ class Node{
 
         //method to add children
 
-        void addChildren(std::vector<unsigned long long> visited){
+        void addChildren(){
             //get the number of actuators
             int numActuators = worldState.actuators.size();
 
@@ -87,14 +91,14 @@ class Node{
                     //make new Node
                     Node * newNode = new Node(newWorld, this);
 
-                    bool beenThere = std::binary_search(visited.begin(), visited.end(), newNode->getHash());
+                    // bool beenThere = std::binary_search(visited.begin(), visited.end(), newNode->getHash());
 
                     //push back child on node vector
-                    if(!beenThere){
+                    // if(!beenThere){
                         omp_set_lock(&pushLock);
                         children.push_back(newNode); 
                         omp_unset_lock(&pushLock);
-                    }
+                    // }
 
                 }
 
@@ -110,14 +114,14 @@ class Node{
                     //make new Node
                     Node * newNode = new Node(newWorld, this);
 
-                    bool beenThere = std::binary_search(visited.begin(), visited.end(), newNode->getHash());
+                    // bool beenThere = std::binary_search(visited.begin(), visited.end(), newNode->getHash());
                     
                     //push back child on node vector
-                    if(!beenThere){
+                    // if(!beenThere){
                         omp_set_lock(&pushLock);
                         children.push_back(newNode); 
                         omp_unset_lock(&pushLock);
-                    }
+                    // }
                 }
 
             }
@@ -144,21 +148,35 @@ class Node{
 
         }
 
-        unsigned long long getHash(){
+        std::string getHash(){
             std::string val = "";
             for(int i = 0; i < worldState.actuators.size(); i++){
                 val += std::to_string(worldState.actuators[i].currentAngle);
-                val += ",";
             }
-            size_t result = 2166136261U ;
-            std::string::const_iterator end = val.end() ;
-            for ( std::string::const_iterator iter = val.begin() ;
-                iter != end ;
-                ++ iter ) {
-                result = (16777619 * result)
-                        ^ static_cast< unsigned char >( *iter ) ;
-            }
-            return result ;
+            // char * pack;
+            // packNode(&pack);
+            // std::string val(pack);
+            unsigned char hash[SHA256_DIGEST_LENGTH];
+            SHA256_CTX sha256;
+            SHA256_Init(&sha256);
+            SHA256_Update(&sha256, val.c_str(),val.size());
+            SHA256_Final(hash, &sha256);
+
+            std::string hashString(hash, hash + SHA256_DIGEST_LENGTH);
+
+            // unsigned long long * hashReturn = (unsigned long long *)(&hash[0]);
+            // printf("\n%lld", *hashReturn);
+            // return hash;
+
+            // size_t result = 2166136261U ;
+            // std::string::const_iterator end = val.end() ;
+            // for ( std::string::const_iterator iter = val.begin() ;
+            //     iter != end ;
+            //     ++ iter ) {
+            //     result = (16777619 * result)
+            //             ^ static_cast< unsigned char >( *iter ) ;
+            // }
+            return hashString;
         }
 
 
