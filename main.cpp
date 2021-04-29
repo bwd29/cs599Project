@@ -27,7 +27,7 @@ int main(int argc, char * argv[]){
     DTYPE actuatorStepSize = 0.01;
     DTYPE minAngle = 0;
     DTYPE maxAngle = 180;
-    Vec endPoint = Vec(3, 0, 0);
+    Vec endPoint = Vec(2, 0, 0);
 
     // first build the world
     if(my_rank ==0)  printf("Building the world...");
