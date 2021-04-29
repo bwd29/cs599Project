@@ -1,0 +1,35 @@
+Building the world...Complete
+
+Check Packing
+
+Packed ->
+Actuator loations:
+(0.000000, 0.000000, 0.000000)
+(1.000000, 0.000000, 0.000000)
+Actuator orientations:
+(0.000000, -1.000000, 0.000000)
+(0.000000, -1.000000, 0.000000)
+Actuator angles:
+( 0.000000,  0.000000, )
+
+Unpacked ->
+Actuator loations:
+(0.000000, 0.000000, 0.000000)
+(1.000000, 0.000000, 0.000000)
+Actuator orientations:
+(0.000000, -1.000000, 0.000000)
+(0.000000, -1.000000, 0.000000)
+Actuator angles:
+( 0.000000,  0.000000, )
+
+
+Runnng agent code
+Solution found with time: 32.451098
+Actuator loations:
+(0.000000, 0.000000, 0.000000)
+(0.866025, 0.000000, 0.500000)
+Actuator orientations:
+(0.000000, -1.000000, 0.000000)
+(0.000000, -1.000000, 0.000000)
+Actuator angles:
+( 30.000000,  120.000000, )

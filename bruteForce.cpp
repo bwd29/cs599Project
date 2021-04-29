@@ -20,7 +20,7 @@ int main(int argc, char ** argv){
 
     int numActuators = 2;
     Vec destination = Vec(0,0,1);
-    DTYPE actuatorStepSize = 0.1;
+    DTYPE actuatorStepSize = 0.01;
     DTYPE minAngle = 0;
     DTYPE maxAngle = 180;
     Vec endPoint = Vec(2, 0, 0);
