@@ -1,0 +1,67 @@
+
+Chain length of: 1000
+Building the world...Complete
+
+
+
+Runnng agent code
+
+Visited 245837 nodes
+Solution found with time: 47.847211
+syncTime: 17.422451
+ Node search Time: 30.424760
+Actuator loations:
+(0.000000, 0.000000, 0.000000)
+(0.866025, 0.000000, 0.500000)
+Actuator orientations:
+(0.000000, -1.000000, 0.000000)
+(0.000000, -1.000000, 0.000000)
+Actuator angles:
+( 30.000000,  120.000000, )
+
+
+Chain length of: 1000
+Building the world...Complete
+
+
+
+Runnng agent code
+
+Visited 297236 nodes
+Solution found with time: 81.244793
+syncTime: 50.615742
+ Node search Time: 30.629050
+Actuator loations:
+(0.000000, 0.000000, 0.000000)
+(0.866025, 0.000000, 0.500000)
+Actuator orientations:
+(0.000000, -1.000000, 0.000000)
+(0.000000, -1.000000, 0.000000)
+Actuator angles:
+( 30.000000,  120.000000, )
+
+
+
+Chain length of: 1000
+Building the world...Complete
+
+
+
+Runnng agent code
+
+Visited 426327 nodes
+Solution found with time: 180.977992
+syncTime: 148.511615
+ Node search Time: 32.466378
+Actuator loations:
+(0.000000, 0.000000, 0.000000)
+(0.866025, 0.000000, 0.500000)
+Actuator orientations:
+(0.000000, -1.000000, 0.000000)
+(0.000000, -1.000000, 0.000000)
+Actuator angles:
+( 30.000000,  120.000000, )
+
+[1619739929.820039] [cn18:2835525:0]        knem_ep.c:81   UCX  ERROR KNEM inline copy failed, ioctl() return value - -1, copy status - 0: Invalid argument
+[1619739929.830579] [cn18:2835520:0]        knem_ep.c:81   UCX  ERROR KNEM inline copy failed, ioctl() return value - -1, copy status - 0: Invalid argument
+[1619739929.835791] [cn18:2835524:0]        knem_ep.c:81   UCX  ERROR KNEM inline copy failed, ioctl() return value - -1, copy status - 0: Invalid argument

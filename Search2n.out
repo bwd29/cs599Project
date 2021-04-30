@@ -1,0 +1,21 @@
+
+Chain length of: 100000
+Building the world...Complete
+
+
+
+Runnng agent code
+
+Visited 231023 nodes
+Solution found with time: 28.161507
+syncTime: 5.965974
+ Node search Time: 22.195533
+Actuator loations:
+(0.000000, 0.000000, 0.000000)
+(0.866025, 0.000000, 0.500000)
+Actuator orientations:
+(0.000000, -1.000000, 0.000000)
+(0.000000, -1.000000, 0.000000)
+Actuator angles:
+( 30.000000,  120.000000, )
+
