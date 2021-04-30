@@ -1,0 +1,34 @@
+Building the world...Complete
+Performing test move:
+Actuator Loations: 
+(0.000000, 0.000000, 0.000000)
+(0.707107, 0.000000, 0.707107)
+Actuator angles: 45.000000, 0.000000, 
+EndPoint: (1.414214,0.000000,1.414214)
+Actuator Loations: 
+(0.000000, 0.000000, 0.000000)
+(0.707107, 0.000000, 0.707107)
+Actuator angles: 45.000000, 45.000000, 
+EndPoint: (0.707107,0.000000,1.707107)
+
+Itterating through 324000000 states...Building the world...Complete
+Performing test move:
+Actuator Loations: 
+(0.000000, 0.000000, 0.000000)
+(0.707107, 0.000000, 0.707107)
+Actuator angles: 45.000000, 0.000000, 
+EndPoint: (1.414214,0.000000,1.414214)
+Actuator Loations: 
+(0.000000, 0.000000, 0.000000)
+(0.707107, 0.000000, 0.707107)
+Actuator angles: 45.000000, 45.000000, 
+EndPoint: (0.707107,0.000000,1.707107)
+
+Itterating through 324000000 states...Complete!
+Time to brute search: 20.694092 
+
+Lowest score was 0.000000 with angles: 30.000000, 120.000000, 
+Actuator Loations: 
+(0.000000, 0.000000, 0.000000)
+(0.866025, 0.000000, 0.500000)
+EndPoint: (-0.000000,0.000000,1.000000)

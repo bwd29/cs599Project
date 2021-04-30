@@ -21,9 +21,11 @@ module load openmpi
 
 # mpic++ bruteForce.cpp -o test -lm -fopenmp -lssl -lcrypto -O3
 
-srun --ntasks=1 ./test 
-srun --ntasks=4 ./test 
-srun --ntasks=8 ./test 
-srun --ntasks=12 ./test
-srun --ntasks=16 ./test
-srun --ntasks=20 ./test 
+# srun --ntasks=1 ./test
+srun --ntasks=2 ./test 
+# srun --ntasks=4 ./test 
+# srun --ntasks=8 ./test 
+# srun --ntasks=12 ./test
+# srun --ntasks=16 ./test
+# srun --ntasks=20 ./test 
+
