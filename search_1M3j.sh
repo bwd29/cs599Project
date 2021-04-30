@@ -7,7 +7,7 @@
 
 #SBATCH --error=/home/fhe2/cs599Project/Search1M3j.err
 
-#SBATCH --time=30:00  
+#SBATCH --time=1:00:00  
 
 #SBATCH --mem=0          ## all mem
 #SBATCH -C epyc

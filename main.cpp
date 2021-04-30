@@ -22,9 +22,9 @@ int main(int argc, char * argv[]){
     if(my_rank == 0) printf("\nChain length of: %d\n", chain);
 
 
-    int numActuators = 2;
+    int numActuators = 3;
     Vec destination = Vec(0,0,1);
-    DTYPE actuatorStepSize = 0.01;
+    DTYPE actuatorStepSize = 0.1;
     DTYPE minAngle = 0;
     DTYPE maxAngle = 180;
     Vec endPoint = Vec(2, 0, 0);
