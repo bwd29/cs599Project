@@ -18,12 +18,12 @@ int main(int argc, char ** argv){
     MPI_Comm_size(MPI_COMM_WORLD,&nprocs);
 
 
-    int numActuators = 2;
+    int numActuators = 3;
     Vec destination = Vec(0,0,1);
-    DTYPE actuatorStepSize = 0.01;
+    DTYPE actuatorStepSize = 0.1;
     DTYPE minAngle = 0;
     DTYPE maxAngle = 180;
-    Vec endPoint = Vec(2, 0, 0);
+    Vec endPoint = Vec(3, 0, 0);
 
     // first build the world
     printf("Building the world...");
@@ -97,25 +97,30 @@ int main(int argc, char ** argv){
     // #pragma omp parallel for shared(i) num_threads(numActuators)
     for(DTYPE i = mystart; i <= (mystart+localStep); i+=actuatorStepSize){
         for(DTYPE j = minAngle; j <= maxAngle; j+=actuatorStepSize){
-            World tempWorld = World(test);
-            tempWorld.moveActuators(0,i);
-            tempWorld.moveActuators(1,j);
-            DTYPE score = tempWorld.checkDist();
+            for(DTYPE k = minAngle; k <= maxAngle; k+=actuatorStepSize){
+                World tempWorld = World(test);
+                tempWorld.moveActuators(0,i);
+                tempWorld.moveActuators(1,j);
+                tempWorld.moveActuators(2,k);
+                DTYPE score = tempWorld.checkDist();
 
-            // omp_set_lock(&scoreLock);
-            if(score < lowestScore){
-                // omp_unset_lock(&scoreLock);
-                lowestScore = score;
-                bestWorld = World(tempWorld);
-                bestAngles[0] = i;
-                bestAngles[1] = j;
-                actuatorLocs[0] = tempWorld.actuatorLocations[0];
-                actuatorLocs[1] = tempWorld.actuatorLocations[1];
-                // for(int k = 0; k < numActuators; k++){
-                //     bestAngles[k] = tempWorld.actuators[k].currentAngle;
-                // }
-            }else{
-                // omp_unset_lock(&scoreLock);
+                // omp_set_lock(&scoreLock);
+                if(score < lowestScore){
+                    // omp_unset_lock(&scoreLock);
+                    lowestScore = score;
+                    bestWorld = World(tempWorld);
+                    bestAngles[0] = i;
+                    bestAngles[1] = j;
+                    bestAngles[2] = k;
+                    actuatorLocs[0] = tempWorld.actuatorLocations[0];
+                    actuatorLocs[1] = tempWorld.actuatorLocations[1];
+                    actuatorLocs[2] = tempWorld.actuatorLocations[2];
+                    // for(int k = 0; k < numActuators; k++){
+                    //     bestAngles[k] = tempWorld.actuators[k].currentAngle;
+                    // }
+                }else{
+                    // omp_unset_lock(&scoreLock);
+                }
             }
 
         }
