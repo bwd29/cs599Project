@@ -1,0 +1,129 @@
+[cn18:2835525:0:2835525] ib_mlx5_log.c:139  Remote access on mlx5_0:1/IB (synd 0x13 vend 0x88 hw_synd 0/0)
+[cn18:2835525:0:2835525] ib_mlx5_log.c:139  RC QP 0x4a05 wqe[732]: RDMA_READ s-- [rva 0x145028890010 rkey 0x56c361] [va 0x146d921e7cb0 len 3920 lkey 0x571d9a]
+[cn18:2835520:0:2835520] ib_mlx5_log.c:139  Remote access on mlx5_0:1/IB (synd 0x13 vend 0x88 hw_synd 0/0)
+[cn18:2835520:0:2835520] ib_mlx5_log.c:139  RC QP 0x4a20 wqe[732]: RDMA_READ s-- [rva 0x145028890010 rkey 0x56c361] [va 0x14a4bcf73cb0 len 3920 lkey 0x57009e]
+[cn18:2835524:0:2835524] ib_mlx5_log.c:139  Remote access on mlx5_0:1/IB (synd 0x13 vend 0x88 hw_synd 0/0)
+[cn18:2835524:0:2835524] ib_mlx5_log.c:139  RC QP 0x49fd wqe[732]: RDMA_READ s-- [rva 0x145028890010 rkey 0x56c361] [va 0x154b83460cb0 len 3920 lkey 0x57019f]
+==== backtrace (tid:2835520) ====
+ 0 0x00000000000532f9 ucs_debug_print_backtrace()  ???:0
+ 1 0x000000000001e1f8 uct_ib_mlx5_completion_with_err()  ???:0
+ 2 0x000000000002d6bd uct_rc_mlx5_iface_progress()  ???:0
+ 3 0x000000000002d472 uct_rc_mlx5_iface_progress()  ???:0
+ 4 0x000000000002324a ucp_worker_progress()  ???:0
+ 5 0x00000000000030f7 mca_pml_ucx_progress()  ???:0
+ 6 0x000000000003062c opal_progress()  ???:0
+ 7 0x0000000000003dd5 mca_pml_ucx_recv()  ???:0
+ 8 0x000000000007f5d5 PMPI_Recv()  ???:0
+ 9 0x00000000004053cc Agent::sync()  ???:0
+10 0x0000000000407fd8 Agent::findPath()  ???:0
+11 0x0000000000401f7a main()  ???:0
+12 0x00000000000236a3 __libc_start_main()  ???:0
+13 0x000000000040225e _start()  ???:0
+=================================
+[cn18:2835520] *** Process received signal ***
+[cn18:2835520] Signal: Aborted (6)
+[cn18:2835520] Signal code:  (-6)
+[cn18:2835520] [ 0] /lib64/libpthread.so.0(+0x12dd0)[0x14ac4bab0dd0]
+[cn18:2835520] [ 1] /lib64/libc.so.6(gsignal+0x10f)[0x14ac4b71370f]
+[cn18:2835520] [ 2] /lib64/libc.so.6(abort+0x127)[0x14ac4b6fdb25]
+[cn18:2835520] [ 3] /lib64/libucs.so.0(+0x51df6)[0x14ac3f92edf6]
+[cn18:2835520] [ 4] /lib64/libucs.so.0(+0x5648b)[0x14ac3f93348b]
+[cn18:2835520] [ 5] /lib64/libucs.so.0(ucs_log_dispatch+0xdc)[0x14ac3f9335cc]
+[cn18:2835520] [ 6] /lib64/ucx/libuct_ib.so.0(uct_ib_mlx5_completion_with_err+0x4c8)[0x14ac3f2621f8]
+[cn18:2835520] [ 7] /lib64/ucx/libuct_ib.so.0(+0x2d6bd)[0x14ac3f2716bd]
+[cn18:2835520] [ 8] /lib64/ucx/libuct_ib.so.0(uct_rc_mlx5_iface_progress+0x4c2)[0x14ac3f271472]
+[cn18:2835520] [ 9] /lib64/libucp.so.0(ucp_worker_progress+0x5a)[0x14ac400c324a]
+[cn18:2835520] [10] /packages/openmpi/3.1.6/lib/openmpi/mca_pml_ucx.so(mca_pml_ucx_progress+0x17)[0x14ac403050f7]
+[cn18:2835520] [11] /packages/openmpi/3.1.6/lib/libopen-pal.so.40(opal_progress+0x2c)[0x14ac4ad4162c]
+[cn18:2835520] [12] /packages/openmpi/3.1.6/lib/openmpi/mca_pml_ucx.so(mca_pml_ucx_recv+0xd5)[0x14ac40305dd5]
+[cn18:2835520] [13] /packages/openmpi/3.1.6/lib/libmpi.so.40(MPI_Recv+0x145)[0x14ac4c8a45d5]
+[cn18:2835520] [14] /home/fhe2/cs599Project/./run[0x4053cc]
+[cn18:2835520] [15] /home/fhe2/cs599Project/./run[0x407fd8]
+[cn18:2835520] [16] /home/fhe2/cs599Project/./run[0x401f7a]
+[cn18:2835520] [17] /lib64/libc.so.6(__libc_start_main+0xf3)[0x14ac4b6ff6a3]
+[cn18:2835520] [18] /home/fhe2/cs599Project/./run[0x40225e]
+[cn18:2835520] *** End of error message ***
+==== backtrace (tid:2835524) ====
+ 0 0x00000000000532f9 ucs_debug_print_backtrace()  ???:0
+ 1 0x000000000001e1f8 uct_ib_mlx5_completion_with_err()  ???:0
+ 2 0x000000000002d6bd uct_rc_mlx5_iface_progress()  ???:0
+ 3 0x000000000002d472 uct_rc_mlx5_iface_progress()  ???:0
+ 4 0x000000000002324a ucp_worker_progress()  ???:0
+ 5 0x00000000000030f7 mca_pml_ucx_progress()  ???:0
+ 6 0x000000000003062c opal_progress()  ???:0
+ 7 0x0000000000003dd5 mca_pml_ucx_recv()  ???:0
+ 8 0x000000000007f5d5 PMPI_Recv()  ???:0
+ 9 0x00000000004053cc Agent::sync()  ???:0
+10 0x0000000000407fd8 Agent::findPath()  ???:0
+11 0x0000000000401f7a main()  ???:0
+12 0x00000000000236a3 __libc_start_main()  ???:0
+13 0x000000000040225e _start()  ???:0
+=================================
+[cn18:2835524] *** Process received signal ***
+==== backtrace (tid:2835525) ====
+ 0 0x00000000000532f9 ucs_debug_print_backtrace()  ???:0
+ 1 0x000000000001e1f8 uct_ib_mlx5_completion_with_err()  ???:0
+[cn18:2835524] Signal: Aborted (6)
+[cn18:2835524] Signal code:  (-6)
+ 2 0x000000000002d6bd uct_rc_mlx5_iface_progress()  ???:0
+ 3 0x000000000002d472 uct_rc_mlx5_iface_progress()  ???:0
+ 4 0x000000000002324a ucp_worker_progress()  ???:0
+ 5 0x00000000000030f7 mca_pml_ucx_progress()  ???:0
+ 6 0x000000000003062c opal_progress()  ???:0
+ 7 0x0000000000003dd5 mca_pml_ucx_recv()  ???:0
+ 8 0x000000000007f5d5 PMPI_Recv()  ???:0
+ 9 0x00000000004053cc Agent::sync()  ???:0
+10 0x0000000000407fd8 Agent::findPath()  ???:0
+11 0x0000000000401f7a main()  ???:0
+12 0x00000000000236a3 __libc_start_main()  ???:0
+13 0x000000000040225e _start()  ???:0
+=================================
+[cn18:2835524] [ 0] /lib64/libpthread.so.0(+0x12dd0)[0x155311ad2dd0]
+[cn18:2835525] *** Process received signal ***
+[cn18:2835525] Signal: Aborted (6)
+[cn18:2835525] Signal code:  (-6)
+[cn18:2835524] [ 1] /lib64/libc.so.6(gsignal+0x10f)[0x15531173570f]
+[cn18:2835524] [ 2] /lib64/libc.so.6(abort+0x127)[0x15531171fb25]
+[cn18:2835524] [ 3] /lib64/libucs.so.0(+0x51df6)[0x155305966df6]
+[cn18:2835524] [ 4] /lib64/libucs.so.0(+0x5648b)[0x15530596b48b]
+[cn18:2835524] [ 5] /lib64/libucs.so.0(ucs_log_dispatch+0xdc)[0x15530596b5cc]
+[cn18:2835525] [ 0] /lib64/libpthread.so.0(+0x12dd0)[0x14751fe20dd0]
+[cn18:2835524] [ 6] /lib64/ucx/libuct_ib.so.0(uct_ib_mlx5_completion_with_err+0x4c8)[0x1553052771f8]
+[cn18:2835524] [ 7] /lib64/ucx/libuct_ib.so.0(+0x2d6bd)[0x1553052866bd]
+[cn18:2835524] [ 8] /lib64/ucx/libuct_ib.so.0(uct_rc_mlx5_iface_progress+0x4c2)[0x155305286472]
+[cn18:2835524] [ 9] /lib64/libucp.so.0(ucp_worker_progress+0x5a)[0x1553060fb24a]
+[cn18:2835524] [10] /packages/openmpi/3.1.6/lib/openmpi/mca_pml_ucx.so(mca_pml_ucx_progress+0x17)[0x15530633d0f7]
+[cn18:2835525] [ 1] /lib64/libc.so.6(gsignal+0x10f)[0x14751fa8370f]
+[cn18:2835524] [11] /packages/openmpi/3.1.6/lib/libopen-pal.so.40(opal_progress+0x2c)[0x155310d6362c]
+[cn18:2835524] [12] /packages/openmpi/3.1.6/lib/openmpi/mca_pml_ucx.so(mca_pml_ucx_recv+0xd5)[0x15530633ddd5]
+[cn18:2835525] [ 2] /lib64/libc.so.6(abort+0x127)[0x14751fa6db25]
+[cn18:2835525] [ 3] /lib64/libucs.so.0(+0x51df6)[0x147513c41df6]
+[cn18:2835525] [ 4] /lib64/libucs.so.0(+0x5648b)[0x147513c4648b]
+[cn18:2835525] [ 5] /lib64/libucs.so.0(ucs_log_dispatch+0xdc)[0x147513c465cc]
+[cn18:2835524] [13] /packages/openmpi/3.1.6/lib/libmpi.so.40(MPI_Recv+0x145)[0x1553128c65d5]
+[cn18:2835524] [14] /home/fhe2/cs599Project/./run[0x4053cc]
+[cn18:2835524] [15] /home/fhe2/cs599Project/./run[0x407fd8]
+[cn18:2835524] [16] /home/fhe2/cs599Project/./run[0x401f7a]
+[cn18:2835525] [ 6] /lib64/ucx/libuct_ib.so.0(uct_ib_mlx5_completion_with_err+0x4c8)[0x1475135751f8]
+[cn18:2835525] [ 7] /lib64/ucx/libuct_ib.so.0(+0x2d6bd)[0x1475135846bd]
+[cn18:2835525] [ 8] /lib64/ucx/libuct_ib.so.0(uct_rc_mlx5_iface_progress+0x4c2)[0x147513584472]
+[cn18:2835524] [17] /lib64/libc.so.6(__libc_start_main+0xf3)[0x1553117216a3]
+[cn18:2835524] [18] /home/fhe2/cs599Project/./run[0x40225e]
+[cn18:2835524] *** End of error message ***
+[cn18:2835525] [ 9] /lib64/libucp.so.0(ucp_worker_progress+0x5a)[0x1475143d624a]
+[cn18:2835525] [10] /packages/openmpi/3.1.6/lib/openmpi/mca_pml_ucx.so(mca_pml_ucx_progress+0x17)[0x1475146180f7]
+[cn18:2835525] [11] /packages/openmpi/3.1.6/lib/libopen-pal.so.40(opal_progress+0x2c)[0x14751f0b162c]
+[cn18:2835525] [12] /packages/openmpi/3.1.6/lib/openmpi/mca_pml_ucx.so(mca_pml_ucx_recv+0xd5)[0x147514618dd5]
+[cn18:2835525] [13] /packages/openmpi/3.1.6/lib/libmpi.so.40(MPI_Recv+0x145)[0x147520c145d5]
+[cn18:2835525] [14] /home/fhe2/cs599Project/./run[0x4053cc]
+[cn18:2835525] [15] /home/fhe2/cs599Project/./run[0x407fd8]
+[cn18:2835525] [16] /home/fhe2/cs599Project/./run[0x401f7a]
+[cn18:2835525] [17] /lib64/libc.so.6(__libc_start_main+0xf3)[0x14751fa6f6a3]
+[cn18:2835525] [18] /home/fhe2/cs599Project/./run[0x40225e]
+[cn18:2835525] *** End of error message ***
+slurmstepd: error: Detected 1 oom-kill event(s) in step 38579850.3 cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
+srun: error: cn18: task 7: Out Of Memory
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 38579850.3 ON cn18 CANCELLED AT 2021-04-29T17:03:15 DUE TO TIME LIMIT ***
+slurmstepd: error: *** JOB 38579850 ON cn18 CANCELLED AT 2021-04-29T17:03:15 DUE TO TIME LIMIT ***
+slurmstepd: error: Detected 1 oom-kill event(s) in step 38579850.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
